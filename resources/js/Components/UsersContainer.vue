@@ -1,6 +1,12 @@
-<script setup>
+<script>
 
 import UserCard from './UserCard.vue';
+
+export default {
+    components: {
+        UserCard
+    }
+}
 
 </script>
 

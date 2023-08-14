@@ -1,7 +1,13 @@
-<script setup>
+<script>
 
 import Sidebar from '../Components/Sidebar.vue';
 import UsersContainer from '../Components/UsersContainer.vue';
+
+export default {
+    components: {
+        Sidebar, UsersContainer
+    }
+}
 
 </script>
 

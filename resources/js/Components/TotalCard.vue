@@ -1,8 +1,10 @@
-<script setup>
+<script>
 
-import { onMounted } from 'vue';
-
-const props = defineProps(['title', 'icon', 'color', 'number']);
+export default {
+    props: [
+        'title', 'icon', 'color', 'number'
+    ]
+}
 
 
 </script>

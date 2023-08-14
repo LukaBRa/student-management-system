@@ -1,26 +1,34 @@
-<script setup>
+<script>
 
 import Sidebar from '../Components/Sidebar.vue';
 import StudentSubject from '../Components/StudentSubject.vue';
 import Activity from '../Components/Activity.vue';
-import { ref, computed } from 'vue';
 
-const activeTab = ref('marks');
-
-const showMarksTab = computed(() => {
-    return activeTab.value == "marks";
-});
-
-const showActivitiesTab = computed(() => {
-    return activeTab.value == "activities";
-});
-
-const toggleMarksTab = () => {
-    activeTab.value = "marks";
-}
-
-const toggleActivitiesTab = () => {
-    activeTab.value = "activities";
+export default {
+    data() {
+        return {
+            toggledTab: 'marks'
+        }
+    },
+    components: {
+        Sidebar, StudentSubject, Activity
+    },
+    methods:{
+        toggleMarksTab() {
+            this.toggledTab = "marks";
+        },
+        toggleActivitiesTab() {
+            this.toggledTab = "activities";
+        }
+    },
+    computed: {
+        showActivitiesTab() {
+            return this.toggledTab == "activities"
+        },
+        showMarksTab() {
+            return this.toggledTab == "marks"
+        },
+    }
 }
 
 </script>
