@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+* {
+    box-sizing: border-box;
+    font-family: 'Roboto';
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+:root {
+    --black: #383838;
+    --white: #fcf7f2;   
+    --brown: #925A54;
+    --light-brown: #ED8950;
+}
+
+.bg-dark{
+    background-color: var(--black);
+    border: 1px solid var(--black);
+}
+
+.bg-light{
+    background-color: var(--white);
+}
+
+.bg-brown{
+    background-color: var(--brown);
+    border: 1px solid var(--brown);
+}
+
+.bg-light-brown{
+    background-color: var(--light-brown);
+}
+
+.text-dark{
+    color: var(--black);
+}
+
+.text-light{
+    color: var(--white);
+}
+
+.text-brown{
+    color: var(--brown);
+}
+
+.text-light-brown{
+    color: var(--light-brown);
+}
+
+.dashboard{
+    height: 100vh;
+    width: 100vw;
+    padding: 0rem 2rem;
+}
+
+.small-btn{
+    padding: 0.3rem 0.5rem;
+    font-size: 1.1rem;
+    border: 1.5px solid var(--black);
+    color: var(--black);
+    background: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.small-btn:hover{
+    background-color: #e9e9e9;
+}
+
