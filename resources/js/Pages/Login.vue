@@ -1,5 +1,28 @@
 <script>
 
+import { useForm } from '@inertiajs/vue3';
+
+export default {
+    props: [
+        'errors',
+        'admin'
+    ],
+    setup(){
+        const form = useForm({
+            name: '',
+            email: '',
+            password: '',
+            remember: false,
+        });
+
+        return { form };
+    },
+    methods: {
+        submitForm() {
+            this.form.post('/login');
+        }
+    }
+}
 
 </script>
 
@@ -18,23 +41,28 @@
         <i class="fa-solid fa-user-group text-dark"></i>
         <h2 class="text-dark">PRIJAVA</h2>
         <p class="text-dark">Dobrodošli na elektronski dnevnik</p>
-
-        <form>
+        <p class="error-message">{{ errors.invalidData }}</p>
+        <form @submit.prevent="submitForm">
             <div class="form-group">
                 <label for="email" class="text-dark">Email adresa</label>
                 <div class="form-input">
                     <i class="fa-solid fa-envelope text-dark"></i>
-                    <input class="bg-light" type="text" name="email" id="email" placeholder="Vaša email adresa...">
+                    <input v-model="form.email" class="bg-light" type="text" name="email" id="email" placeholder="Vaša email adresa...">
                 </div>
+                <p class="error-message">{{ errors.email }}</p>
             </div>
             <div class="form-group">
                 <label for="password" class="text-dark">Lozinka</label>
                 <div class="form-input">
                     <i class="fa-solid fa-key text-dark"></i>
-                    <input class="bg-light" type="password" name="password" id="password" placeholder="Vaša lozinka...">
+                    <input v-model="form.password" class="bg-light" type="password" name="password" id="password" placeholder="Vaša lozinka...">
                 </div>
+                <p class="error-message">{{ errors.password }}</p>
             </div>
-            <input class="bg-brown text-light" type="button" value="Prijavi se">
+            <div class="form-checkbox">
+                <input type="checkbox" v-model="form.remember">Zapamti me?
+            </div>
+            <input class="bg-brown text-light" type="submit" value="Prijavi se">
         </form>
     </div>
 
@@ -117,7 +145,7 @@ form .form-group{
     margin-left: 0.8rem;
 }
 
-input[type='button'] {
+input[type='submit'] {
     padding: 0.4rem;
     font-size: 1.1rem;
     border-radius: 20px;
@@ -126,11 +154,18 @@ input[type='button'] {
     transition: all 0.3s ease;
 }
 
-input[type='button']:hover {
+input[type='submit']:hover {
     background-color: #96615b;
 }
 
+.error-message{
+    color: rgb(243, 75, 75);
+}
 
+.form-checkbox{
+    display: flex;
+    gap: 0.5rem;
+}
 
 
 </style>

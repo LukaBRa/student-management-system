@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -17,12 +19,20 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
+
+    if(Auth::check()){
+        return redirect("/administracija");
+    }
+
     return Inertia::render('Login');
-});
+})->name('login');
+
+Route::post('/login', [LoginController::class, 'loginAuthentification']);
+Route::get('/logout', [LoginController::class, 'logout']);
 
 Route::get("/administracija", function () {
     return Inertia::render('Administration');
-})->name('dashboard');
+})->name('dashboard')->middleware('auth');
 
 Route::get('/profesori', function () {
     return Inertia::render('Professors');

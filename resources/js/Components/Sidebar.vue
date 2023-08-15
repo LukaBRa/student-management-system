@@ -23,7 +23,7 @@ import SidebarLink from '../Components/SidebarLink.vue';
 
     </div>
 
-    <SidebarLink icon='<i class="fa-solid fa-arrow-right-from-bracket"></i>' title="Odjava" linkTo="/odjava" />
+    <SidebarLink icon='<i class="fa-solid fa-arrow-right-from-bracket"></i>' title="Odjava" linkTo="/logout" />
 
 </div>
 
