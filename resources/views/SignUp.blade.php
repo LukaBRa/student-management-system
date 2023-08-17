@@ -1,0 +1,1 @@
+Postovani {{ $name }}, Vasa lozinka je {{ $tempPassword }}.

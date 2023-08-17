@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignId('class_id')->nullable();
             $table->string('name');
             $table->string('email')->unique()->nullable();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->string('adress');
             $table->string('phone_number');

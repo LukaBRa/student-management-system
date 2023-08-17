@@ -3,8 +3,30 @@
 import UserCard from './UserCard.vue';
 
 export default {
+    data() {
+        return {
+            containerTitle: '',
+        }
+    },
     components: {
         UserCard
+    },
+    props: [
+        'pageUsers',
+        'userType',
+        'category',
+    ],
+    mounted() {
+            if (this.userType == "professors" && this.category == 0) {
+                this.containerTitle = "Svi profesori"
+            }else{
+                //
+            }
+            if(this.userType == "students" && this.category == 0){
+                this.containerTitle = "Svi učenici"
+            }else{
+                //
+            }
     }
 }
 
@@ -13,15 +35,9 @@ export default {
 <template>
 
 <div class="users-container">
-    <h2>Svi profesori/ucenici</h2>
+    <h2>{{ containerTitle }}</h2>
     <div class="user-list">
-        <UserCard />
-        <UserCard />
-        <UserCard />
-        <UserCard />
-        <UserCard />
-        <UserCard />
-        <UserCard />
+        <UserCard  v-for="user in users" :key="user.id" :userName="user.name" type="proffesors"/>
     </div>
 </div>
 

@@ -1,14 +1,28 @@
 <script>
 
-
+export default{
+    props: [
+        'userName',
+        'type'
+    ],
+    computed: {
+        showProffesorIcon(){
+            return this.type == "professors"
+        },
+        showStudentIcon(){
+            return this.type == "student";
+        }
+    }
+}
 
 </script>
 
 <template>
 
 <a href="" class="user-card">
-    <i class="fa-solid fa-user-tie"></i>
-    <p>Luka Banovic</p>
+    <i v-if="showProffesorIcon" class="fa-solid fa-user-tie"></i>
+    <i v-if="showStudentIcon" class="fa-solid fa-user-graduate"></i>
+    <p>{{ userName }}</p>
 </a>
 
 </template>

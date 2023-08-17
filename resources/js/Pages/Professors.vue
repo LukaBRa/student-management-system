@@ -3,9 +3,22 @@
 import Sidebar from '../Components/Sidebar.vue';
 import UsersContainer from '../Components/UsersContainer.vue';
 
-export default{ 
+export default{
+    data() {
+        return {
+            pageUsers: [],
+            professorFilter: 0
+        }
+    },
     components: {
         Sidebar, UsersContainer
+    },
+    props: [
+        'professors',
+        'subjects'
+    ],
+    mounted() {
+        this.pageUsers = [...this.professors];
     }
 }
 
@@ -20,22 +33,18 @@ export default{
     <div class="dashboard bg-light">
 
         <div class="professors-header">
-            <a href="/add-professor" class="add-professor-link">Dodaj profesora <i class="fa-solid fa-plus"></i></a>
+            <a href="/dodaj-profesora" class="add-professor-link">Dodaj profesora <i class="fa-solid fa-plus"></i></a>
             <div class="search-box">
                 <input type="text" placeholder="Pretrazi profesora...">
                 <i class="fa-solid fa-magnifying-glass fa-rotate-90"></i>
             </div>
             <select class="select-filter">
-                <option value="Svi profesori" default>Svi profesori</option>
-                <option value="Svi profesori" default>Profesori matematike</option>
-                <option value="Svi profesori" default>Profesori fizike</option>
-                <option value="Svi profesori" default>Profesori srpskog jezika</option>
-                <option value="Svi profesori" default>Profesori engleskog jezika</option>
-                <option value="Svi profesori" default>Profesori biologije</option>
+                <option value="0" default>Svi profesori</option>
+                <option v-for="subject in subjects" :value="subject.id">{{ subject.subject_name }}</option>
             </select>
         </div>
 
-        <UsersContainer />
+        <UsersContainer :users="pageUsers" userType="professors" :category="professorFilter"/>
 
     </div>
 

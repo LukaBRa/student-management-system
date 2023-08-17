@@ -9,7 +9,14 @@ import GoogleChart from '../Components/GoogleChart.vue';
 export default{
     components: {
         Sidebar, Welcome, TotalCard, Activity, GoogleChart
-    }
+    },
+    props: [
+        'user',
+        'numberOfStudents',
+        'numberOfProfessors',
+        'lessons',
+        'activities'
+    ],
 }
 
 </script>
@@ -22,13 +29,13 @@ export default{
 
     <div class="dashboard bg-light">
 
-        <Welcome />
+        <Welcome :userName="user.name"/>
 
         <div class="total-cards">
 
-            <TotalCard title="Učenici" icon='<i class="fa-solid fa-graduation-cap"></i>' number="120" color="#4682A9"/>
-            <TotalCard title="Profesori" icon='<i class="fa-solid fa-user-tie"></i>' number="10" color="#A78295"/>
-            <TotalCard title="Časovi" icon='<i class="fa-solid fa-chalkboard-user"></i>' number="49" color="#FF6666"/>
+            <TotalCard title="Učenici" icon='<i class="fa-solid fa-graduation-cap"></i>' :number="numberOfStudents" color="#4682A9"/>
+            <TotalCard title="Profesori" icon='<i class="fa-solid fa-user-tie"></i>' :number="numberOfProfessors" color="#A78295"/>
+            <TotalCard title="Časovi" icon='<i class="fa-solid fa-chalkboard-user"></i>' :number="lessons.length" color="#FF6666"/>
 
         </div>
 

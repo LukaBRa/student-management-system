@@ -1,6 +1,10 @@
 <script>
 
-
+export default {
+    props: [
+        'userName'
+    ]
+}
 
 </script>
 
@@ -9,7 +13,7 @@
 <div class="welcome-container">
 
     <div>
-        <p class="welcome-message">Dobrodošli, Luka <img src="/images/wave.png" width="30" height="30" /></p>
+        <p class="welcome-message">Dobrodošli, {{ userName }} <img src="/images/wave.png" width="30" height="30" /></p>
         <p class="message-secondary">na elektronski dnevnik</p>
     </div>
     
