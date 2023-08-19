@@ -12,7 +12,7 @@ export default {
         UserCard
     },
     props: [
-        'pageUsers',
+        'users',
         'userType',
         'category',
     ],
@@ -37,7 +37,7 @@ export default {
 <div class="users-container">
     <h2>{{ containerTitle }}</h2>
     <div class="user-list">
-        <UserCard  v-for="user in users" :key="user.id" :userName="user.name" type="proffesors"/>
+        <UserCard  v-for="user in users" :key="user.id" :userId="user.id" :userName="user.name" :type="userType"/>
     </div>
 </div>
 

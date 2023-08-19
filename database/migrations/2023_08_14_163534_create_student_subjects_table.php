@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->foreignId('subject_id');
-            $table->integer('final_mark');
+            $table->integer('final_mark')->nullable()->default(null);
             $table->timestamps();
         });
     }

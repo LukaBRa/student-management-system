@@ -7,7 +7,9 @@
     padding: 0;
 }
 
+
 .container {
+    position: relative;
     display: flex;
     width: 100vw;
     height: 100vh;
@@ -75,3 +77,40 @@
     background-color: #e9e9e9;
 }
 
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    background: rgba(95, 95, 95, 0.5);
+}
+
+.form-container{
+    background-color: white;
+    padding: 1rem;
+}
+
+.modal-header{
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}
+
+.modal-header button{
+    font-size: 1.3rem;
+    background-color: white;
+    border: none;
+    color: var(--brown);
+    cursor: pointer;
+}
+
+.message{
+    position: absolute;
+    background-color: rgb(24, 163, 24);
+    color: white;
+    width: max-content;
+    padding: 2rem;
+    left: 50%;
+}

@@ -4,8 +4,30 @@ import Sidebar from '../Components/Sidebar.vue';
 import UsersContainer from '../Components/UsersContainer.vue';
 
 export default {
+    data() {
+        return {
+            pageUsers: [],
+            studentFilter: 0
+        }
+    },
     components: {
         Sidebar, UsersContainer
+    },
+    props: [
+        'students',
+        'classes',
+        'user'
+    ],
+    mounted() {
+        this.pageUsers = [...this.students];
+    },
+    computed: {
+        adminRule() {
+            return this.user.type_id == 1;
+        },
+        professorRule() {
+            return this.user.type_id == 2;
+        }
     }
 }
 
@@ -20,22 +42,18 @@ export default {
     <div class="dashboard bg-light">
 
         <div class="students-header">
-            <a href="/add-student" class="add-professor-link">Dodaj učenika <i class="fa-solid fa-plus"></i></a>
+            <a v-if="adminRule" href="/dodaj-ucenika" class="add-professor-link">Dodaj učenika <i class="fa-solid fa-plus"></i></a>
             <div class="search-box">
                 <input type="text" placeholder="Pretrazi učenike...">
                 <i class="fa-solid fa-magnifying-glass fa-rotate-90"></i>
             </div>
             <select class="select-filter">
                 <option value="Svi studenti" default>Svi učenici</option>
-                <option value="V-1" default>V-1</option>
-                <option value="V-2" default>V-2</option>
-                <option value="VII-5" default>VII-5</option>
-                <option value="VIII-1" default>VIII-1</option>
-                <option value="VIII-2" default>VIII-2</option>
+                <option v-for="cl in classes" :key="cl.id" :value="cl.id">{{ cl.class_name }}</option>
             </select>
         </div>
 
-        <UsersContainer />
+        <UsersContainer :users="pageUsers" userType="students" :category="studentFilter"/>
 
     </div>
 

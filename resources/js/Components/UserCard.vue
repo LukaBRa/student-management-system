@@ -3,14 +3,15 @@
 export default{
     props: [
         'userName',
-        'type'
+        'type',
+        'userId'
     ],
     computed: {
         showProffesorIcon(){
             return this.type == "professors"
         },
         showStudentIcon(){
-            return this.type == "student";
+            return this.type == "students";
         }
     }
 }
@@ -19,9 +20,13 @@ export default{
 
 <template>
 
-<a href="" class="user-card">
-    <i v-if="showProffesorIcon" class="fa-solid fa-user-tie"></i>
-    <i v-if="showStudentIcon" class="fa-solid fa-user-graduate"></i>
+<a v-if="showProffesorIcon" :href="'/profesor/' + userId" class="user-card">
+    <i class="fa-solid fa-user-tie"></i>
+    <p>{{ userName }}</p>
+</a>
+
+<a v-if="showStudentIcon" :href="'/ucenik/' + userId" class="user-card">
+    <i class="fa-solid fa-user-graduate"></i>
     <p>{{ userName }}</p>
 </a>
 

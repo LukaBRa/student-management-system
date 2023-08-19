@@ -15,10 +15,19 @@ export default{
     },
     props: [
         'professors',
-        'subjects'
+        'subjects',
+        'user'
     ],
     mounted() {
         this.pageUsers = [...this.professors];
+    },
+    computed: {
+        adminRule() {
+            return this.user.type_id == 1;
+        },
+        professorRule() {
+            return this.user.type_id == 2;
+        }
     }
 }
 
@@ -33,7 +42,7 @@ export default{
     <div class="dashboard bg-light">
 
         <div class="professors-header">
-            <a href="/dodaj-profesora" class="add-professor-link">Dodaj profesora <i class="fa-solid fa-plus"></i></a>
+            <a v-if="adminRule" href="/dodaj-profesora" class="add-professor-link">Dodaj profesora <i class="fa-solid fa-plus"></i></a>
             <div class="search-box">
                 <input type="text" placeholder="Pretrazi profesora...">
                 <i class="fa-solid fa-magnifying-glass fa-rotate-90"></i>

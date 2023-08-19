@@ -1,6 +1,49 @@
-<script setup>
+<script>
 
+export default{
+    data() {
+        return {
+            marks: [],
+            finalMark: '',
+            averageMark: 0,
+        }
+    },
+    props: [
+        'subject',
+        'student',
+        'finalMarks'
+    ],
+    mounted() {
+        this.finalMarks.forEach(mark => {
+            if(mark.subject_id == this.subject.id){
+                this.finalMark = mark.final_mark;
+            }
+        });
 
+        axios.get(`http://localhost:8000/api/get-marks/${this.subject.id}/student/${this.student.id}`)
+        .then(response => {
+            this.marks = response.data.marks;
+            
+            if(this.marks.length > 0) {
+                let sum = 0;
+
+                this.marks.forEach(mark => {
+                    sum += mark;
+                });
+
+                this.averageMark = sum/this.marks.length;
+            }
+
+        })
+        .catch(error => console.log(error));
+
+    },
+    computed: {
+        showFinalMark(){
+            return this.finalMark != null;
+        }
+    }
+}
 
 </script>
 
@@ -9,18 +52,14 @@
 <div class="subject-container">
     <div>
         <div class="subject-marks">
-            <p class="subject-name">Matematika: </p>
-            <p class="subject-mark">3</p>
-            <p class="subject-mark">3</p>
-            <p class="subject-mark">3</p>
-            <p class="subject-mark">3</p>
-            <p class="subject-mark">3</p>
+            <p class="subject-name">{{ subject.subject_name }}: </p>
+            <p class="subject-mark" v-for="mark in marks">{{ mark }}</p>
         </div>
-        <p class="avg-mark">Prosečna ocena: 3.00</p>
+        <p class="avg-mark">Prosečna ocena: {{ averageMark }}</p>
     </div>
     <div class="final-mark-container">
-        <p class="final-mark">Zakljucna ocena: <span class="final-mark-accent">3</span></p>
-        <span class="light-accent">Nije zakljucena ocena</span>
+        <p v-if="showFinalMark" class="final-mark">Zaključna ocena: <span class="final-mark-accent">3</span></p>
+        <span v-else class="light-accent">Nije zaključena ocena</span>
     </div>
 </div>
 

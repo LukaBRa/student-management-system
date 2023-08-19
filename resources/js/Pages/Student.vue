@@ -3,22 +3,56 @@
 import Sidebar from '../Components/Sidebar.vue';
 import StudentSubject from '../Components/StudentSubject.vue';
 import Activity from '../Components/Activity.vue';
+import AddMarkForm from '../Components/AddMarkForm.vue';
+import Message from '../Components/Message.vue';
+import AddActivity from '../Components/AddActivity.vue';
 
 export default {
     data() {
         return {
-            toggledTab: 'marks'
+            toggledTab: 'marks',
+            showAddMarkForm: false,
+            canAddMarksSubjects: [],
+            message: '',
+            showMessage: false,
+            showAddActivityForm: false,
         }
     },
     components: {
-        Sidebar, StudentSubject, Activity
+        Sidebar, StudentSubject, Activity, AddMarkForm, Message, AddActivity
     },
+    props: [
+        'student',
+        'user',
+        'subjects',
+        'studentClass',
+        'numberOfAbsences',
+        'activities',
+        'parents',
+        'finalMarks',
+        'professorsSubjects',
+    ],
     methods:{
         toggleMarksTab() {
             this.toggledTab = "marks";
         },
         toggleActivitiesTab() {
             this.toggledTab = "activities";
+        },
+        toggleAddMarkForm() {
+            this.showAddMarkForm = !this.showAddMarkForm;
+        },
+        toggleAddActivitiesForm() {
+            this.showAddActivityForm = !this.showAddActivityForm;
+        },
+        markAddedHandle() {
+            this.message = "Uspešno je dodata ocena."
+            this.showMessage = true;
+            this.showAddMarkForm = false;
+            setTimeout(() => {
+                this.showMessage = false;
+                this.message = "";
+            }, 3000);
         }
     },
     computed: {
@@ -28,6 +62,18 @@ export default {
         showMarksTab() {
             return this.toggledTab == "marks"
         },
+        professorsRule() {
+            return this.user.type_id == 2;
+        },
+    },
+    mounted() {
+        for(let i = 0; i < this.professorsSubjects.length; i++){
+            for(let j = 0; j < this.subjects.length; j++) {
+                if(this.professorsSubjects[i].id == this.subjects[j].id){
+                    this.canAddMarksSubjects.push(this.professorsSubjects[i]);
+                }
+            }
+        }
     }
 }
 
@@ -39,54 +85,59 @@ export default {
 
     <Sidebar />
 
+    <Message v-if="showMessage" :message="message"/>
+
+    <AddMarkForm v-if="showAddMarkForm" @success="markAddedHandle" @toggleAddMarkForm="toggleAddMarkForm" :canAddMarkSubjects="canAddMarksSubjects" :professorId="user.id" :studentId="student.id"/>
+    <AddActivity v-if="showAddActivityForm" @toggleAddActivitiesForm="toggleAddActivitiesForm"/>
+
     <div class="dashboard bg-light">
 
         <div class="student-container">
 
             <div class="student-personal-info">
                 <i class="fa-solid fa-user-graduate"></i>
-                <p class="student-name">Luka Banovic</p>
+                <p class="student-name">{{ student.name }}</p>
                 <div class="student-data">
                     <div class="data-box">
                         <p class="data-box-accent">Ime majke:</p>
-                        <p>Jelena Banovic</p>
+                        <p>{{ parents[0].name }}</p>
                     </div>
                     <div class="data-box">
                         <p class="data-box-accent">Ime oca:</p>
-                        <p>Zoran Banovic</p>
+                        <p>{{ parents[1].name }}</p>
                     </div>
                     <div class="data-box">
                         <p class="data-box-accent">Adresa:</p>
-                        <p>Mislopoljska 82</p>
+                        <p>{{ student.adress }}</p>
                     </div>
                     <div class="data-box">
                         <p class="data-box-accent">Broj telefona:</p>
-                        <p>0649040015</p>
+                        <p>{{ student.phone_number }}</p>
                     </div>
                     <div class="data-box">
                         <p class="data-box-accent">Broj telefona majke:</p>
-                        <p>0649040015</p>
+                        <p>{{ parents[0].phone_number }}</p>
                     </div>
                     <div class="data-box">
                         <p class="data-box-accent">Broj telefona oca:</p>
-                        <p>0649040015</p>
+                        <p>{{ parents[1].phone_number }}</p>
                     </div>
                     <div class="data-box">
                         <p class="data-box-accent">Email adresa roditelja:</p>
-                        <p>roditelj@gmail.com</p>
+                        <p>{{ parents[0].email }}</p>
                     </div>
                     <div class="data-box">
                         <p class="data-box-accent">Odeljenje:</p>
-                        <p>VII-4</p>
+                        <p>{{ studentClass.class_name }}</p>
                     </div>
                     <div class="data-box">
                         <p class="data-box-accent">Broj izostanaka:</p>
-                        <p>3</p>
+                        <p>{{ numberOfAbsences }}</p>
                     </div>
                     <h3 class="average-mark">Prosek: 4.40</h3>
                     <div class="student-btn-group">
-                        <button>Upiši ocenu</button>
-                        <button>Upiši aktivnost</button>
+                        <button v-if="professorsRule" @click="toggleAddMarkForm">Upiši ocenu</button>
+                        <button v-if="professorsRule" @click="toggleAddActivitiesForm">Upiši aktivnost</button>
                     </div>
                 </div>
             </div>
@@ -99,25 +150,10 @@ export default {
                 </div>
 
                 <div class="marks-tab" v-if="showMarksTab">
-                    <StudentSubject />
-                    <StudentSubject />
-                    <StudentSubject />
-                    <StudentSubject />
-                    <StudentSubject />
-                    <StudentSubject />
-                    <StudentSubject />
-                    <StudentSubject />
+                    <StudentSubject v-for="subject in subjects" :key="subject.id" :subject="subject" :student="student" :finalMarks="finalMarks"/>
                 </div>
 
                 <div class="activities-tab" v-if="showActivitiesTab">
-                    <Activity />
-                    <Activity />
-                    <Activity />
-                    <Activity />
-                    <Activity />
-                    <Activity />
-                    <Activity />
-                    <Activity />
                     <Activity />
                 </div>
 

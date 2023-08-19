@@ -5,6 +5,19 @@ import Sidebar from '../Components/Sidebar.vue';
 export default{
     components: {
         Sidebar
+    },
+    props: [
+        'professor',
+        'professorSubjects',
+        'user'
+    ],
+    computed: {
+        adminRule() {
+            return this.user.type_id == 1;
+        },
+        professorRule() {
+            return this.user.type_id == 2;
+        }
     }
 }
 
@@ -23,9 +36,9 @@ export default{
 
             <div class="student-personal-info">
                 <i class="fa-solid fa-user-tie"></i>
-                <p class="student-name">Luka Banovic</p>
+                <p class="student-name">{{ professor.name }}</p>
                 <div class="user-btn-group">
-                    <button>Dodaj predmet</button>
+                    <button v-if="adminRule">Dodaj predmet</button>
                 </div>
             </div>
 
@@ -33,15 +46,15 @@ export default{
                 <div class="student-data">
                     <div class="data-box">
                         <p class="data-box-accent">Adresa:</p>
-                        <p>Mislopoljska 82</p>
+                        <p>{{ professor.adress }}</p>
                     </div>
                     <div class="data-box">
                         <p class="data-box-accent">Broj telefona:</p>
-                        <p>0649040015</p>
+                        <p>{{ professor.phone_number }}</p>
                     </div>
                     <div class="data-box">
                         <p class="data-box-accent">Email adresa:</p>
-                        <p>profesor@gmail.com</p>
+                        <p>{{ professor.email }}</p>
                     </div>
                     <div class="table-box">
                         <p class="data-box-accent data-box-flex">Predmeti:</p>
@@ -51,53 +64,9 @@ export default{
                                     <th>Šifra predmeta</th>
                                     <th>Naziv predmeta</th>
                                 </tr>
-                                <tr>
-                                    <td>1234</td>
-                                    <td>Matematika</td>
-                                </tr>
-                                <tr>
-                                    <td>1334</td>
-                                    <td>Fizika</td>
-                                </tr>
-                                <tr>
-                                    <td>1334</td>
-                                    <td>Fizika</td>
-                                </tr>
-                                <tr>
-                                    <td>1334</td>
-                                    <td>Fizika</td>
-                                </tr>
-                                <tr>
-                                    <td>1334</td>
-                                    <td>Fizika</td>
-                                </tr>
-                                <tr>
-                                    <td>1334</td>
-                                    <td>Fizika</td>
-                                </tr>
-                                <tr>
-                                    <td>1334</td>
-                                    <td>Fizika</td>
-                                </tr>
-                                <tr>
-                                    <td>1334</td>
-                                    <td>Fizika</td>
-                                </tr>
-                                <tr>
-                                    <td>1334</td>
-                                    <td>Fizika</td>
-                                </tr>
-                                <tr>
-                                    <td>1334</td>
-                                    <td>Fizika</td>
-                                </tr>
-                                <tr>
-                                    <td>1334</td>
-                                    <td>Fizika</td>
-                                </tr>
-                                <tr>
-                                    <td>1334</td>
-                                    <td>Fizika</td>
+                                <tr v-for="subject in professorSubjects" :key="subject.id">
+                                    <td>{{ subject.subject_code }}</td>
+                                    <td>{{ subject.subject_name }}</td>
                                 </tr>
                             </table>
                         </div>
