@@ -1,6 +1,41 @@
-<script setup>
+<script>
 
-
+export default {
+    data() {
+        return {
+            name: '',
+        }
+    },
+    props: [
+        'activity',
+        'studentName',
+    ],
+    computed: {
+        showPositive() {
+            return this.activity.activity_type == "positive"
+        },
+        showNeutral() {
+            return this.activity.activity_type == "neutral"
+        },
+        showNegative() {
+            return this.activity.activity_type == "negative"
+        },
+        userLink() {
+            return "/ucenik/" + this.activity.user_id;
+        },
+    },
+    mounted() {
+        if(this.studentName == "none"){
+            axios.get("http://localhost:8000/api/get-user/" + this.activity.user_id)
+            .then(response => {
+                this.name = response.data;
+            })
+            .catch(error => console.log(error));
+        }else{
+            this.name = this.studentName;
+        }
+    }
+}
 
 </script>
 
@@ -8,12 +43,16 @@
 
 <div class="activity">
     <div class="activity-header">
-        <i class="fa-regular fa-face-smile"></i>
-        <p class="activity-date">02.05.2023</p>
+        <i v-if="showPositive" class="fa-regular fa-face-smile"></i>
+        <i v-if="showNeutral" class="fa-regular fa-face-meh"></i>
+        <i v-if="showNegative" class="fa-regular fa-face-tired"></i>
+        <p class="activity-date">{{ activity.created_at }}</p>
     </div>
     <div class="activity-content">
-        <p class="activity-student">Učenik: <a href="#">Luka Banovic</a></p>
-        <p class="content-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel sunt, quia totam dicta temporibus doloribus cumque laboriosam cupiditate repudiandae laborum quo iste cum repellat odit non similique ullam obcaecati. Minus?</p>
+        <p class="activity-student">Učenik:
+            <a :href="userLink">{{ name }}</a>
+        </p>
+        <p class="content-text">{{ activity.comment }}</p>
     </div>
 </div>
 
@@ -43,6 +82,11 @@
 
 .activity-content a:hover{
     text-decoration: underline;
+    background: none;
+}
+
+.activity-content a:hover{
+    text-decoration: underline;
 }
 
 .activity-student{
@@ -57,6 +101,7 @@
     border-left: 1px solid lightgray;
 }
 
+
 .activity-date{
     color: rgb(192, 192, 192);
 }
@@ -64,6 +109,18 @@
 .activity-header{
     color: green;
     font-size: 1.1rem;
+}
+
+.fa-face-smile-beam{
+    color: green;
+}
+
+.fa-face-meh{
+    color: rgb(226, 193, 85);
+}
+
+.fa-face-tired{
+    color: rgb(252, 74, 74);
 }
 
 </style>

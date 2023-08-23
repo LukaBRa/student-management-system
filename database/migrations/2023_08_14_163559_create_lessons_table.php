@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id');
             $table->foreignId('subject_id');
+            $table->foreignId('class_id');
             $table->string('lesson_title');
             $table->string('lesson_description');
             $table->timestamps();

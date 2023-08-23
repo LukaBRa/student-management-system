@@ -53,6 +53,15 @@ export default {
                 this.showMessage = false;
                 this.message = "";
             }, 3000);
+        },
+        activityAddedHandle() {
+            this.message = "Uspešno je upisana aktivnost."
+            this.showMessage = true;
+            this.showAddActivityForm = false;
+            setTimeout(() => {
+                this.showMessage = false;
+                this.message = "";
+            }, 3000);
         }
     },
     computed: {
@@ -88,7 +97,7 @@ export default {
     <Message v-if="showMessage" :message="message"/>
 
     <AddMarkForm v-if="showAddMarkForm" @success="markAddedHandle" @toggleAddMarkForm="toggleAddMarkForm" :canAddMarkSubjects="canAddMarksSubjects" :professorId="user.id" :studentId="student.id"/>
-    <AddActivity v-if="showAddActivityForm" @toggleAddActivitiesForm="toggleAddActivitiesForm"/>
+    <AddActivity v-if="showAddActivityForm" @toggleAddActivitiesForm="toggleAddActivitiesForm" :studentId="student.id" @success="activityAddedHandle"/>
 
     <div class="dashboard bg-light">
 
@@ -154,7 +163,7 @@ export default {
                 </div>
 
                 <div class="activities-tab" v-if="showActivitiesTab">
-                    <Activity />
+                    <Activity v-for="activity in activities" :key="activity.id" :activity="activity" :studentName="student.name"/>
                 </div>
 
             </div>

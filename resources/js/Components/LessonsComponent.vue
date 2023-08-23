@@ -1,20 +1,25 @@
-<script setup>
+<script>
 
-
+export default {
+    props: [
+        'lesson'
+    ],
+    computed: {
+        lessonLink() {
+            return "/cas/" + this.lesson.id;
+        }
+    }
+}
 
 </script>
 
 <template>
 
 <div class="lesson-component">
-        <p><span class="bold-accent">Nastavnik:</span> Zoran Zoranic</p>
-        <p><span class="bold-accent">Predmet:</span> Matematika</p>
-        <p><span class="bold-accent">Naziv teme:</span> Linearne jednacine</p>
-        <p><span class="bold-accent">Opis casa:</span> Vezbanje</p>
-        <p><span class="bold-accent">Odeljenje:</span> VII-2</p>
-        <p><span class="bold-accent">Broj odsutnih:</span> 10</p>
+        <p><span class="bold-accent">Naziv teme:</span> {{ lesson.lesson_title }}</p>
+        <p><span class="bold-accent">Opis casa:</span> {{ lesson.lesson_description }}</p>
 
-        <a href="" class="lesson-review-link">Pregled časa <i class="fa-solid fa-arrow-right"></i></a>
+        <a :href="lessonLink" class="lesson-review-link">Detaljnije <i class="fa-solid fa-arrow-right"></i></a>
 </div>
 
 </template>
@@ -25,6 +30,8 @@
     border: 1px solid lightgray;
     padding: 1rem;
     border-radius: 10px;
+    width: 30%;
+    min-height: 10rem;
 }
 
 .lesson-component p{

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LessonController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -11,7 +12,9 @@ use App\Models\StudentSubject;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -44,13 +47,24 @@ Route::get("/administracija", function () {
     $numberOfProfessors = User::where('type_id', 2)->count();
     $lessons = Lesson::all();
     $activities = Activity::all();
+    $lessonGroups = Lesson::selectRaw("lesson_description,count(id) as count")
+                        ->groupBy('lesson_description')
+                        ->get()
+                        ->toArray();
+                        $a1 = array_column($lessonGroups, 'lesson_description');
+                        $a2 = array_column($lessonGroups, 'count');
+                        $result= [];
+                               foreach($a1 as $k => $v) {
+                                   $result[] = [$v, $a2[$k]];
+                               }
 
     return Inertia::render('Administration', [
         'user' => Auth::user(),
         'numberOfStudents' => $numberOfStudents,
         'numberOfProfessors' => $numberOfProfessors,
         'lessons' => $lessons,
-        'activities' => $activities
+        'activities' => $activities,
+        'lessonGroups' => $result
     ]);
 })->name('dashboard')->middleware('auth');
 
@@ -105,7 +119,16 @@ Route::get('/dodaj-ucenika', function () {
 Route::post('/dodaj-studenta', [UserController::class, 'registerStudent']);
 
 Route::get('/dnevnik', function () {
-    return Inertia::render('Lessons');
+
+    $user = Auth::user();
+    $groupedLessons = Lesson::selectRaw('DATE_FORMAT(created_at, "%d.%m.%Y") as formatedDate')
+                            ->groupBy('formatedDate')
+                            ->get();
+
+    return Inertia::render('Lessons', [
+        'user' => $user,
+        'groupedLessons' => $groupedLessons
+    ]);
 });
 
 Route::get('/ucenik/{id}', function ($id) {
@@ -118,7 +141,8 @@ Route::get('/ucenik/{id}', function ($id) {
     $activities = Activity::where('user_id', $student->id)->get();
     $parents = $student->parents()->get();
     $finalMarks = StudentSubject::where('user_id', $id)->get();
-    $professorsSubjects = $user->professorsSubjects()->get();
+    $temp = User::firstWhere('id', $user->id);
+    $professorsSubjects = $temp->professorsSubjects()->get();
 
     return Inertia::render('Student', [
         'student' => $student, 
@@ -143,6 +167,41 @@ Route::get('/profesor/{id}', function ($id) {
         'professor' => $professor,
         'professorSubjects' => $professorSubjects,
         'user' => $user
+    ]);
+});
+
+Route::get('/upis-casova', function () {
+
+    $professor = Auth::user();
+    $user = User::firstWhere('id', $professor->id);
+    $subjects = $user->professorsSubjects()->get();
+    $classes = SchoolClass::all();
+
+    return Inertia::render('AddLesson', [
+        'user' => $user,
+        'subjects' => $subjects,
+        'classes' => $classes,
+    ]);
+});
+
+Route::post("/add-lesson", [LessonController::class, 'addLesson']);
+
+Route::get("/cas/{id}", function (string $id) {
+
+    $lesson = Lesson::firstWhere('id', $id);
+    $professor = User::firstWhere('id', $lesson->user_id);
+    $subject = Subject::firstWhere('id', $lesson->subject_id);
+    $absences = Absence::select('user_id')->where('lesson_id', $lesson->id)->get();
+    $absentStudents = User::whereIn('id', $absences)->get();
+    $sclass = SchoolClass::firstWhere('id', $lesson->class_id);
+    $className = $sclass->class_name;
+
+    return Inertia::render('LessonOverview', [
+        'lesson' => $lesson,
+        'professor' => $professor,
+        'subject' => $subject,
+        'absentStudents' => $absentStudents,
+        'className' => $className,
     ]);
 });
 

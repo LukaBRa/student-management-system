@@ -1,6 +1,38 @@
 <script>
+import axios from 'axios';
 
 
+export default {
+    data() {
+        return {
+            activityType: 'positive',
+            description: '',
+            errorMessage: '',
+        }
+    },
+    props: [
+        'studentId'
+    ],
+    methods: {
+        addActivity() {
+            if(this.description == ''){
+                this.errorMessage = "Opis aktivnosti je obavezan";
+            }else{
+                axios.post("http://localhost:8000/api/add-activity", {
+                    studentId: this.studentId,
+                    actType: this.activityType,
+                    description: this.description
+                })
+                .then(response => {
+                    if(response.data == "success"){
+                        this.$emit("success");
+                    }
+                })
+                .catch(error => console.log(error));
+            }
+        }
+    }
+}
 
 </script>
 
@@ -14,27 +46,28 @@
             <button @click="$emit('toggleAddActivitiesForm')"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <h1>Upis aktivnosti</h1>
-        <form>
+        <form @submit.prevent="addActivity">
             <div class="form-input">
                 <label>Odaberite tip aktivnosti</label>
                 <div class="radio-buttons">
                     <div class="radio-group">
-                        <input type="radio" name="activity-type">
-                        <i class="fa-regular fa-face-smile-beam"></i>
+                        <input v-model="activityType" id="positive" type="radio" name="activity-type" value="positive" checked>
+                        <label for="positive"><i class="fa-regular fa-face-smile-beam"></i></label>
                     </div>
                     <div class="radio-group">
-                        <input type="radio" name="activity-type">
-                        <i class="fa-regular fa-face-meh"></i>
+                        <input v-model="activityType" id="neutral" type="radio" name="activity-type" value="neutral">
+                        <label for="neutral"><i class="fa-regular fa-face-meh"></i></label>
                     </div>
                     <div class="radio-group">
-                        <input type="radio" name="activity-type">
-                        <i class="fa-regular fa-face-tired"></i>
+                        <input v-model="activityType" id="negative" type="radio" name="activity-type" value="negative">
+                        <label for="negative"><i class="fa-regular fa-face-tired"></i></label>
                     </div>
                 </div>
             </div>
             <div class="form-input">
                 <label>Opis aktivnosti</label>
-                <textarea placeholder="Opis..."></textarea>
+                <textarea v-model="description" placeholder="Opis..."></textarea>
+                <p class="error-txt">{{ errorMessage }}</p>
             </div>
             <input type="submit" value="Dodaj aktivnost">
         </form>
@@ -80,6 +113,10 @@ label{
     font-weight: bold;
 }
 
+.radio-group label{
+    font-size: 1.5rem;
+}
+
 textarea{
     resize: none;
     padding: 0.5rem;
@@ -114,6 +151,10 @@ input[type="submit"]:hover{
 
 .fa-face-tired{
     color: rgb(252, 74, 74);
+}
+
+.error-txt{
+    color: rgb(248, 90, 90);
 }
 
 </style>

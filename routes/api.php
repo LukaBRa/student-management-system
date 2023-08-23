@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\LessonController;
 use App\Http\Controllers\MarkController;
+use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\StudentSubjectController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\UserController;
 use App\Models\StudentSubject;
 use App\Models\Subject;
 use Illuminate\Http\Request;
@@ -20,6 +24,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get("/get-marks/{subject_id}/student/{student_id}", [MarkController::class, 'getMarks']);
+
 Route::get("/get-professor-subjects/{user_id}", [SubjectController::class, 'getSubjects']);
 
 Route::post('/add-mark', [MarkController::class, 'addMark']);
+
+Route::post("/add-activity", [ActivityController::class, 'addActivity']);
+
+Route::get("/get-user/{id}", [UserController::class, 'getUserName']);
+
+Route::get("/get-class-students/{classId}", [SchoolClassController::class, 'getStudents']);
+
+Route::get("/get-lessons/date/{date}", [LessonController::class, 'getLessons']);

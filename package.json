@@ -18,6 +18,8 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
+        "@vuejs-community/vue-filter-date-format": "^1.7.1",
+        "moment": "^2.29.4",
         "vue-google-charts": "^1.1.0"
     }
 }

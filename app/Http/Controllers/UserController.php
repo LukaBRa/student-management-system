@@ -168,4 +168,11 @@ class UserController extends Controller
 
     }
 
+    public function getUserName($id) {
+
+        $userName = User::firstWhere('id', $id);
+
+        return response()->json($userName->name);
+    }
+
 }

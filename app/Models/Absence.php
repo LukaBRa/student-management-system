@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Absence extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'lesson_id'
+    ];
+
 }

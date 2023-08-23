@@ -15,7 +15,8 @@ export default{
         'numberOfStudents',
         'numberOfProfessors',
         'lessons',
-        'activities'
+        'activities',
+        'lessonGroups'
     ],
 }
 
@@ -45,18 +46,13 @@ export default{
                 <h2>Aktivnosti</h2>
 
                 <div class="activities">
-                    <Activity />
-                    <Activity />
-                    <Activity />
-                    <Activity />
-                    <Activity />
-                    <Activity />
+                    <Activity v-for="activity in activities" :key="activity.id" :activity="activity" studentName="none"/>
                 </div>
 
             </div>
 
             <div class="lesson-statistics">
-                <GoogleChart />
+                <GoogleChart :lessonGroups="lessonGroups"/>
             </div>
 
         </div>
