@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Mail\SignUp;
+use App\Models\ProfessorSubject;
 use App\Models\Subject;
 use App\Models\User;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -173,6 +176,68 @@ class UserController extends Controller
         $userName = User::firstWhere('id', $id);
 
         return response()->json($userName->name);
+    }
+
+    public function searchProfessors($queryString) {
+
+        if($queryString == ""){
+            $users = User::where('type_id', 2)->get();
+        }else{
+            $users = User::where(DB::raw('lower(name)'), "LIKE", "%".strtolower($queryString)."%")
+            ->where('type_id', 2)
+            ->get();
+        }
+        
+        return response()->json($users);
+    }
+
+    public function searchProfessorsBySubject($subjectId) {
+
+        $users = null;
+
+        if($subjectId == "0"){
+            $users = User::where('type_id', 2)->get();
+        }else{
+
+            $temp = ProfessorSubject::select('user_id')->where('subject_id', $subjectId)->get();
+
+            $users = User::whereIn('id', $temp)->get();
+
+        }
+
+        return response()->json($users);
+    }
+
+    public function searchStudents($queryString) {
+
+        $users = null;
+
+        if($queryString == ""){
+            $users = User::where('type_id', 4)->get();
+        }else{
+            $users = User::where(DB::raw('lower(name)'), "LIKE", "%".strtolower($queryString)."%")
+                        ->where('type_id', 4)
+                        ->get();
+        }
+
+        return response()->json($users);
+    }
+
+    public function searchStudentsByClassName($classId) {
+
+        $users = null;
+
+        if($classId == "0"){
+            $users = User::where('type_id', 4)->get();
+        }else{
+
+            $users = User::where('class_id', $classId)
+                            ->where('type_id', 4)
+                            ->get();
+
+        }
+
+        return response()->json($users);
     }
 
 }

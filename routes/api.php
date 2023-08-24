@@ -36,3 +36,11 @@ Route::get("/get-user/{id}", [UserController::class, 'getUserName']);
 Route::get("/get-class-students/{classId}", [SchoolClassController::class, 'getStudents']);
 
 Route::get("/get-lessons/date/{date}", [LessonController::class, 'getLessons']);
+
+Route::get("/search-professors/{queryString}", [UserController::class, 'searchProfessors']);
+
+Route::get("/search-professors/by-subject/{subjectId}", [UserController::class, 'searchProfessorsBySubject']);
+
+Route::get("/search-students/{queryString}", [UserController::class, 'searchStudents']);
+
+Route::get("/search-students/by-class/{classId}", [UserController::class, 'searchStudentsByClassName']);

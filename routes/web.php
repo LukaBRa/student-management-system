@@ -79,7 +79,7 @@ Route::get('/profesori', function () {
         'subjects' => $subjects,
         'user' => $user
     ]);
-});
+})->middleware('auth');
 
 Route::get('/ucenici', function () {
 
@@ -123,6 +123,7 @@ Route::get('/dnevnik', function () {
     $user = Auth::user();
     $groupedLessons = Lesson::selectRaw('DATE_FORMAT(created_at, "%d.%m.%Y") as formatedDate')
                             ->groupBy('formatedDate')
+                            ->orderBy('formatedDate', 'DESC')
                             ->get();
 
     return Inertia::render('Lessons', [

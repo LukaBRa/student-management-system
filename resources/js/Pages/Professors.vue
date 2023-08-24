@@ -1,11 +1,13 @@
 <script>
 
+import axios from 'axios';
 import Sidebar from '../Components/Sidebar.vue';
 import UsersContainer from '../Components/UsersContainer.vue';
 
 export default{
     data() {
         return {
+            searchText: '',
             pageUsers: [],
             professorFilter: 0
         }
@@ -28,6 +30,22 @@ export default{
         professorRule() {
             return this.user.type_id == 2;
         }
+    },
+    methods: {
+        searchProfessors() {
+            axios.get("http://localhost:8000/api/search-professors/" + this.searchText)
+            .then(response => {
+                this.pageUsers = response.data;
+            })
+            .catch(error => console.log(error));
+        },
+        srcBySubject(){
+            axios.get("http://localhost:8000/api/search-professors/by-subject/" + this.professorFilter)
+            .then(response => {
+                this.pageUsers = response.data;
+            })
+            .catch(error => console.log(error));
+        }
     }
 }
 
@@ -44,10 +62,10 @@ export default{
         <div class="professors-header">
             <a v-if="adminRule" href="/dodaj-profesora" class="add-professor-link">Dodaj profesora <i class="fa-solid fa-plus"></i></a>
             <div class="search-box">
-                <input type="text" placeholder="Pretrazi profesora...">
+                <input @input="searchProfessors" v-model="searchText" type="text" placeholder="Pretrazi profesora...">
                 <i class="fa-solid fa-magnifying-glass fa-rotate-90"></i>
             </div>
-            <select class="select-filter">
+            <select @change="srcBySubject" v-model="professorFilter" class="select-filter">
                 <option value="0" default>Svi profesori</option>
                 <option v-for="subject in subjects" :value="subject.id">{{ subject.subject_name }}</option>
             </select>

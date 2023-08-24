@@ -6,6 +6,7 @@ import UsersContainer from '../Components/UsersContainer.vue';
 export default {
     data() {
         return {
+            searchText: '',
             pageUsers: [],
             studentFilter: 0
         }
@@ -28,6 +29,23 @@ export default {
         professorRule() {
             return this.user.type_id == 2;
         }
+    },
+    methods: {
+        searchStudents() {
+                axios.get("http://localhost:8000/api/search-students/" + this.searchText)
+                .then(response => {
+                    this.pageUsers = response.data;
+                })
+                .catch(error => console.log(error));
+        },
+        srcByClassName(){
+            axios.get("http://localhost:8000/api/search-students/by-class/" + this.studentFilter)
+            .then(response => {
+                this.pageUsers = response.data;
+                console.log(response.data);
+            })
+            .catch(error => console.log(error));
+        }
     }
 }
 
@@ -44,11 +62,11 @@ export default {
         <div class="students-header">
             <a v-if="adminRule" href="/dodaj-ucenika" class="add-professor-link">Dodaj učenika <i class="fa-solid fa-plus"></i></a>
             <div class="search-box">
-                <input type="text" placeholder="Pretrazi učenike...">
+                <input type="text" @input="searchStudents" v-model="searchText" placeholder="Pretrazi učenike...">
                 <i class="fa-solid fa-magnifying-glass fa-rotate-90"></i>
             </div>
-            <select class="select-filter">
-                <option value="Svi studenti" default>Svi učenici</option>
+            <select @change="srcByClassName" class="select-filter" v-model="studentFilter">
+                <option value="0" default>Svi učenici</option>
                 <option v-for="cl in classes" :key="cl.id" :value="cl.id">{{ cl.class_name }}</option>
             </select>
         </div>
