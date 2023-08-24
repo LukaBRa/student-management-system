@@ -53,4 +53,32 @@ class LessonController extends Controller
         return response()->json($lessons);
     }
 
+    public function searchDates($dateQuery) {
+
+        $res = null;
+
+        $dates = Lesson::selectRaw('DATE_FORMAT(created_at, "%d.%m.%Y") as formatedDate')
+                    ->whereDate('created_at', $dateQuery)
+                    ->groupBy('formatedDate')
+                    ->get();
+
+        if(count($dates) > 0){
+            $res = $dates[0];
+        }else{
+            $res = [];
+        }
+
+        return response()->json($res);
+    }
+
+    public function getAllDates() {
+
+        $groupedLessons = Lesson::selectRaw('DATE_FORMAT(created_at, "%d.%m.%Y") as formatedDate')
+                            ->groupBy('formatedDate')
+                            ->orderBy('formatedDate', 'DESC')
+                            ->get();
+
+        return response()->json($groupedLessons);
+    }
+
 }

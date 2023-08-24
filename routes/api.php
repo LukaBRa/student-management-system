@@ -44,3 +44,7 @@ Route::get("/search-professors/by-subject/{subjectId}", [UserController::class, 
 Route::get("/search-students/{queryString}", [UserController::class, 'searchStudents']);
 
 Route::get("/search-students/by-class/{classId}", [UserController::class, 'searchStudentsByClassName']);
+
+Route::get("/searchDates/{dateQuery}", [LessonController::class, 'searchDates']);
+
+Route::get("/all-dates", [LessonController::class, 'getAllDates']);

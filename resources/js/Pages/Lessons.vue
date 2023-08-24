@@ -10,6 +10,7 @@ export default{
             message: '',
             showMessage: false,
             dates: [],
+            dateFilter: null,
         }
     },
     props: [
@@ -26,6 +27,23 @@ export default{
     },
     mounted() {
         this.dates = this.groupedLessons;
+    },
+    methods: {
+        searchDate() {
+            axios.get("http://localhost:8000/api/searchDates/" + this.dateFilter)
+            .then(response => {
+                this.dates = [];
+                this.dates.push(response.data);
+            })
+            .catch(error => console.log(error));
+        },
+        showAllDates() {
+            axios.get("http://localhost:8000/api/all-dates")
+            .then(response => {
+                this.dates = response.data;
+            })
+            .catch(error => console.log(error));
+        }
     }
 }
 
@@ -46,7 +64,8 @@ export default{
             <a href="/upis-casova" v-if="professorRule" class="toggle-btn">Upiši čas</a>
             <div class="date-container">
                 <p>Pretraži po datumu: </p>
-                <input type="date">
+                <input type="date" v-model="dateFilter" @input="searchDate">
+                <button @click="showAllDates" class="toggle-btn">Svi časovi</button>
             </div>
         </div>
 
@@ -73,6 +92,7 @@ export default{
 .date-container{
     display: flex;
     gap: 0.5rem ;
+    align-items: baseline;
 }
 
 .date-container p{
