@@ -3,6 +3,7 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\MarkController;
+use App\Http\Controllers\ProfessorSubjectController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\StudentSubjectController;
 use App\Http\Controllers\SubjectController;
@@ -48,3 +49,5 @@ Route::get("/search-students/by-class/{classId}", [UserController::class, 'searc
 Route::get("/searchDates/{dateQuery}", [LessonController::class, 'searchDates']);
 
 Route::get("/all-dates", [LessonController::class, 'getAllDates']);
+
+Route::post("/confirm-mark", [StudentSubjectController::class, 'confirmMark']);

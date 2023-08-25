@@ -6,12 +6,17 @@ export default{
             marks: [],
             finalMark: '',
             averageMark: 0,
+            canConfirmMark: false,
+            tempSubjects: [],
+            tempSubj: null,
         }
     },
     props: [
+        'user',
         'subject',
         'student',
-        'finalMarks'
+        'finalMarks',
+        'professorsSubjects'
     ],
     mounted() {
         this.finalMarks.forEach(mark => {
@@ -37,10 +42,18 @@ export default{
         })
         .catch(error => console.log(error));
 
+        this.tempSubjects = this.professorsSubjects;
+        this.tempSubj = this.subject;
+
+        this.canConfirmMark = this.tempSubjects.some(s => s.id == this.tempSubj.id);
+
     },
     computed: {
         showFinalMark(){
             return this.finalMark != null;
+        },
+        averageScore() {
+            return Math.round(this.averageMark * 100) / 100;
         }
     }
 }
@@ -50,16 +63,20 @@ export default{
 <template>
 
 <div class="subject-container">
+    
     <div>
         <div class="subject-marks">
             <p class="subject-name">{{ subject.subject_name }}: </p>
             <p class="subject-mark" v-for="mark in marks">{{ mark }}</p>
         </div>
-        <p class="avg-mark">Prosečna ocena: {{ averageMark }}</p>
+        <p class="avg-mark">Prosečna ocena: {{ averageScore }}</p>
     </div>
     <div class="final-mark-container">
-        <p v-if="showFinalMark" class="final-mark">Zaključna ocena: <span class="final-mark-accent">3</span></p>
-        <span v-else class="light-accent">Nije zaključena ocena</span>
+        <p v-if="showFinalMark" class="final-mark">Zaključna ocena: <span class="final-mark-accent">{{ finalMark }}</span></p>
+        <span v-else class="light-accent">
+            <button v-if="canConfirmMark" @click="$emit('toggleConfirmMark', subject.subject_name, subject.id, averageMark, student.id)" class="confirm-mark-btn">Zaključi ocenu</button>
+            Nije zaključena ocena
+        </span>
     </div>
 </div>
 
@@ -108,6 +125,21 @@ export default{
 .avg-mark{
     color: rgb(170, 170, 170);
     margin-top: 0.5rem;
+}
+
+.confirm-mark-btn{
+    background-color: var(--brown);
+    color: white;
+    border: 1px solid var(--brown);
+    padding: 0.2rem;
+    cursor: pointer;
+    margin-right: 0.5rem;
+}
+
+.confirm-mark-btn:hover{
+    background-color: #97645f;
+    color: white;
+    border: 1px solid #97645f;
 }
 
 </style>

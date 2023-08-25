@@ -6,6 +6,7 @@ import Activity from '../Components/Activity.vue';
 import AddMarkForm from '../Components/AddMarkForm.vue';
 import Message from '../Components/Message.vue';
 import AddActivity from '../Components/AddActivity.vue';
+import ConfirmMark from '../Components/ConfirmMark.vue';
 
 export default {
     data() {
@@ -16,10 +17,15 @@ export default {
             message: '',
             showMessage: false,
             showAddActivityForm: false,
+            showConfirmMark: false,
+            formSubjName: '',
+            formSubjId: '',
+            formAverageScore: null,
+            formStudentId: null,
         }
     },
     components: {
-        Sidebar, StudentSubject, Activity, AddMarkForm, Message, AddActivity
+        Sidebar, StudentSubject, Activity, AddMarkForm, Message, AddActivity, ConfirmMark
     },
     props: [
         'student',
@@ -45,6 +51,16 @@ export default {
         toggleAddActivitiesForm() {
             this.showAddActivityForm = !this.showAddActivityForm;
         },
+        toggleConfirmMark() {
+            this.showConfirmMark = !this.showConfirmMark;
+        },
+        toggleConfirmMarkData(subjectName, subjectId, averageScore, studentId) {
+            this.formSubjName = subjectName;
+            this.formSubjId = subjectId;
+            this.formAverageScore = averageScore;
+            this.formStudentId = studentId
+            this.showConfirmMark = !this.showConfirmMark;
+        },
         markAddedHandle() {
             this.message = "Uspešno je dodata ocena."
             this.showMessage = true;
@@ -56,6 +72,16 @@ export default {
         },
         activityAddedHandle() {
             this.message = "Uspešno je upisana aktivnost."
+            this.showMessage = true;
+            this.showAddActivityForm = false;
+            setTimeout(() => {
+                this.showMessage = false;
+                this.message = "";
+            }, 3000);
+        },
+        handleSuccessfullConfirmation() {
+            this.toggleConfirmMark();
+            this.message = "Uspešno je Zaključena ocena."
             this.showMessage = true;
             this.showAddActivityForm = false;
             setTimeout(() => {
@@ -75,15 +101,6 @@ export default {
             return this.user.type_id == 2;
         },
     },
-    mounted() {
-        for(let i = 0; i < this.professorsSubjects.length; i++){
-            for(let j = 0; j < this.subjects.length; j++) {
-                if(this.professorsSubjects[i].id == this.subjects[j].id){
-                    this.canAddMarksSubjects.push(this.professorsSubjects[i]);
-                }
-            }
-        }
-    }
 }
 
 </script>
@@ -92,12 +109,13 @@ export default {
 
 <div class="container">
 
-    <Sidebar />
+    <Sidebar :user="user" :student="student"/>
 
     <Message v-if="showMessage" :message="message"/>
 
-    <AddMarkForm v-if="showAddMarkForm" @success="markAddedHandle" @toggleAddMarkForm="toggleAddMarkForm" :canAddMarkSubjects="canAddMarksSubjects" :professorId="user.id" :studentId="student.id"/>
+    <AddMarkForm v-if="showAddMarkForm" @success="markAddedHandle" @toggleAddMarkForm="toggleAddMarkForm" :canAddMarkSubjects="professorsSubjects" :professorId="user.id" :studentId="student.id"/>
     <AddActivity v-if="showAddActivityForm" @toggleAddActivitiesForm="toggleAddActivitiesForm" :studentId="student.id" @success="activityAddedHandle"/>
+    <ConfirmMark v-if="showConfirmMark" @success="handleSuccessfullConfirmation" @toggleConfirmMark="toggleConfirmMark" :formStudentId="formStudentId" :user="user"  :formSubjName="formSubjName" :formSubjId="formSubjId" :formAverageScore="formAverageScore" />
 
     <div class="dashboard bg-light">
 
@@ -159,7 +177,7 @@ export default {
                 </div>
 
                 <div class="marks-tab" v-if="showMarksTab">
-                    <StudentSubject v-for="subject in subjects" :key="subject.id" :subject="subject" :student="student" :finalMarks="finalMarks"/>
+                    <StudentSubject @toggleConfirmMark="toggleConfirmMarkData" v-for="subject in subjects" :key="subject.id" :professorsSubjects="professorsSubjects" :user="user" :subject="subject" :student="student" :finalMarks="finalMarks"/>
                 </div>
 
                 <div class="activities-tab" v-if="showActivitiesTab">

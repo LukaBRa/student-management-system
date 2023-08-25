@@ -46,7 +46,7 @@ export default{
             <div class="form-input">
                 <label>Izaberi predmet:</label>
                 <select v-model="subjectId">
-                    <option v-for="subject in canAddMarkSubjects" :key="subject.id" :value="subject.id">Matematika</option>
+                    <option v-for="subject in canAddMarkSubjects" :key="subject.id" :value="subject.id">{{ subject.subject_name }}</option>
                 </select>
             </div>
             <div class="form-input">

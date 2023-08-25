@@ -22,4 +22,16 @@ class StudentSubjectController extends Controller
 
     }
 
+    public function confirmMark(Request $request) {
+
+        $record = StudentSubject::where('user_id', $request->studentId)
+                                ->where('subject_id', $request->subjectId)
+                                ->firstOrFail();
+
+        $record->final_mark = $request->finalMark;
+        $record->save();
+
+        return response()->json("success");
+    }
+
 }
