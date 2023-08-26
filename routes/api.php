@@ -53,3 +53,5 @@ Route::get("/all-dates", [LessonController::class, 'getAllDates']);
 Route::post("/confirm-mark", [StudentSubjectController::class, 'confirmMark']);
 
 Route::post("/delete-mark", [MarkController::class, 'deleteMark']);
+
+Route::post("/add-subject", [ProfessorSubjectController::class, 'addSubject']);

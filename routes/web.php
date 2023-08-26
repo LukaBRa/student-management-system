@@ -175,10 +175,12 @@ Route::get('/profesor/{id}', function ($id) {
     $professor = User::firstWhere('id', $id);
     $professorSubjects = $professor->professorsSubjects()->get();
     $user = Auth::user();
+    $subjects = Subject::all();
 
     return Inertia::render('Profesor',[
         'professor' => $professor,
         'professorSubjects' => $professorSubjects,
+        'allSubjects' => $subjects,
         'user' => $user
     ]);
 });

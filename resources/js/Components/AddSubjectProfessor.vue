@@ -1,0 +1,112 @@
+<script>
+
+export default{
+    data() {
+        return {
+            errorMsg: '',
+            checkedSubjects: [],
+        }
+    },
+    props: [
+        'subjects',
+        'professorId'
+    ],
+    methods: {
+        submitForm() {
+            if(this.checkedSubjects.length == 0){
+                this.errorMsg = "Izaberite predmet.";
+            }else{
+                axios.post("http://localhost:8000/api/add-subject", {
+                    profId: this.professorId,
+                    subjects: this.checkedSubjects
+                })
+                .then(response => {
+                    if(response.data == "success"){
+                        this.$emit('success');
+                    }
+                })
+                .catch(error => console.log(error));
+            }
+        }
+    }
+}
+
+</script>
+
+<template>
+
+<div class="modal">
+    <div class="form-container">
+        <div class="modal-header">
+            <button @click="$emit('toggleForm')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <h2>Dodaj predmet</h2>
+        <form @submit.prevent="submitForm">
+            <label class="main-label">Predmeti: </label>
+            <div class="checkbox-group">
+                <div class="checkbox-input" v-for="subj in subjects">
+                    <input type="checkbox" v-model="checkedSubjects" name="checkedSubjects" :value="subj.id" :id="subj.id">
+                    <label :for="subj.id">{{ subj.subject_name }}</label>
+                </div>
+            </div>
+            <p class="error-msg">{{ errorMsg }}</p>
+            <input type="submit" value="Dodaj predmete">
+        </form>
+    </div>
+</div>
+
+</template>
+
+<style scoped>
+
+h2{
+    border-bottom: 1px solid lightgray;
+    padding-bottom: 0.5rem;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    width: 15rem;
+}
+
+.main-label{
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+.checkbox-group{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.checkbox-input{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+input[type="submit"]{
+    padding: 0.5rem;
+    background-color: var(--brown);
+    border: 1px solid var(--brown);
+    color: white;
+    border-radius: 20px;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover{
+    background-color: #966560;
+    border: 1px solid #966560;
+}
+.error-msg{
+    color: rgb(255, 113, 113);
+}
+
+</style>

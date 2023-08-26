@@ -1,16 +1,39 @@
 <script>
 
 import Sidebar from '../Components/Sidebar.vue';
+import Message from '../Components/Message.vue';
+import AddSubjectProfessor from '../Components/AddSubjectProfessor.vue';
 
 export default{
+    data() {
+        return {
+            showMessage: false,
+            msgText: '',
+            showForm: false,
+        }
+    },
     components: {
-        Sidebar
+        Sidebar, Message, AddSubjectProfessor
     },
     props: [
         'professor',
         'professorSubjects',
+        'allSubjects',
         'user'
     ],
+    methods: {
+        toggleForm(){
+            this.showForm = !this.showForm
+        },
+        handleSubjectAdded() {
+            this.msgText = "Uspešno ste dodali predmet profesoru.";
+            this.showMessage = true;
+            this.showForm = false;
+            setTimeout(() => {
+                window.location.href = "http://localhost:8000/profesor/" + this.professor.id;
+            }, 1000);
+        }
+    },
     computed: {
         adminRule() {
             return this.user.type_id == 1;
@@ -30,6 +53,10 @@ export default{
 
     <Sidebar />
 
+    <Message v-if="showMessage" :message="msgText"/>
+
+    <AddSubjectProfessor v-if="showForm" :subjects="allSubjects" :professorId="professor.id" @toggleForm="toggleForm" @success="handleSubjectAdded"/>
+
     <div class="dashboard bg-light">
 
         <div class="student-container">
@@ -38,7 +65,7 @@ export default{
                 <i class="fa-solid fa-user-tie"></i>
                 <p class="student-name">{{ professor.name }}</p>
                 <div class="user-btn-group">
-                    <button v-if="adminRule">Dodaj predmet</button>
+                    <button v-if="adminRule" @click="toggleForm">Dodaj predmet</button>
                 </div>
             </div>
 
