@@ -18,7 +18,8 @@ import SidebarLink from '../Components/SidebarLink.vue';
             <SidebarLink icon='<i class="fa-solid fa-house"></i>' title="Početna" linkTo="/administracija"/>
             <SidebarLink icon='<i class="fa-solid fa-user-tie"></i>' title="Profesori" linkTo="/profesori"/>
             <SidebarLink icon='<i class="fa-solid fa-user-graduate"></i>' title="Učenici" linkTo="/ucenici" />
-            <SidebarLink icon='<i class="fa-solid fa-book-bookmark"></i>' title="Dnevnik" linkTo="/dnevnik" />        
+            <SidebarLink icon='<i class="fa-solid fa-book-bookmark"></i>' title="Dnevnik" linkTo="/dnevnik" />
+            <SidebarLink icon='<i class="fa-solid fa-gear"></i>' title="Nalog" linkTo="/nalog" />        
         </div>
 
     </div>

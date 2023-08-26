@@ -220,4 +220,15 @@ Route::get("/cas/{id}", function (string $id) {
     ]);
 });
 
+Route::get("/nalog", function() {
+
+    $user = Auth::user();
+
+    return Inertia::render('Account', [
+        'user' => $user
+    ]);
+});
+
+Route::post("/change-password", [UserController::class, 'changePassword']);
+
 require __DIR__.'/auth.php';

@@ -8,6 +8,7 @@ use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -234,6 +235,39 @@ class UserController extends Controller
         }
 
         return response()->json($users);
+    }
+
+    public function changePassword(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'newPassword' => 'required',
+            'confirmedPassword' => 'required'
+        ], [
+            'newPassword.required' => "Nova lozinka je obavezna.",
+            'confirmedPassword.required' => "Potvrda lozinke je obavezna",
+        ]);
+
+        if($validator->fails()){
+            return redirect()->back()->withErrors($validator);
+        }
+
+        if($request->newPassword != $request->confirmedPassword){
+            return redirect()->back()->withErrors(['notMatching' => "Lozinke nisu iste."]);
+        }
+
+        $user = Auth::user();
+
+        $temp = User::firstWhere('id', $user->id);
+
+        $temp->password = $request->newPassword;
+        $temp->save();
+
+        if($user->type_id == 1 || $user->type_id == 2){
+            return redirect('/administracija');
+        }else{
+            return redirect('/pocetna');
+        }
+
     }
 
 }
