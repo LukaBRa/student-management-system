@@ -15,6 +15,7 @@ export default {
         Sidebar, Message
     },
     props: [
+        'user',
         'errors'
     ],
     setup(){
@@ -40,7 +41,7 @@ export default {
 
 <div class="container">
     
-    <Sidebar />
+    <Sidebar :user="user"/>
 
     <Message v-if="showMessage" :message="message"/>
 

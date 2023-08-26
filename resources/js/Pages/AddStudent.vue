@@ -23,6 +23,7 @@ export default {
         return { form };
     },
     props: [
+        'user',
         'classes',
         'errors'
     ],
@@ -42,7 +43,7 @@ export default {
 
 <div class="container">
 
-    <Sidebar />
+    <Sidebar :user="user"/>
 
     <div class="dashboard bg-light">
 

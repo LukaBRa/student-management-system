@@ -8,6 +8,7 @@ use App\Models\Absence;
 use App\Models\Activity;
 use App\Models\Lesson;
 use App\Models\SchoolClass;
+use App\Models\StudentParent;
 use App\Models\StudentSubject;
 use App\Models\Subject;
 use App\Models\User;
@@ -32,7 +33,11 @@ use Inertia\Inertia;
 Route::get('/', function () {
 
     if(Auth::check()){
-        return redirect("/administracija");
+        if(Auth::user()->type_id == 1 || Auth::user()->type_id == 2){
+            return redirect("/administracija");
+        }else{
+            return redirect("/pocetna");
+        }
     }
 
     return Inertia::render('Login');
@@ -58,6 +63,10 @@ Route::get("/administracija", function () {
                                    $result[] = [$v, $a2[$k]];
                                }
 
+    if(Auth::user()->type_id == 3){
+        return redirect("/pocetna");
+    }
+
     return Inertia::render('Administration', [
         'user' => Auth::user(),
         'numberOfStudents' => $numberOfStudents,
@@ -68,11 +77,57 @@ Route::get("/administracija", function () {
     ]);
 })->name('dashboard')->middleware('auth');
 
+Route::get("/pocetna", function() {
+
+    $user = Auth::user();
+    $studentID = StudentParent::firstWhere('parent_id', $user->id);
+    $student = User::firstWhere('id', $studentID->student_id);
+    $studentsSubjects = $student->studentsSubjects()->get();
+    $studentClass = SchoolClass::firstWhere('id', $student->class_id);
+    $numberOfAbsences = Absence::where('user_id', $student->id)->count();
+    $activities = Activity::where('user_id', $student->id)->get();
+    $parents = $student->parents()->get();
+    $finalMarks = StudentSubject::where('user_id', $student->id)->get();
+    $temp = User::firstWhere('id', $user->id);
+    $professorsSubjects = $temp->professorsSubjects()->get();
+    $finalMarksConfirmed = StudentSubject::where('user_id', $student->id)
+                                        ->where('final_mark', "<>" , null)
+                                        ->pluck('final_mark')
+                                        ->toArray();
+    $finalScore = 0;
+
+    if(count($finalMarksConfirmed) > 0){
+        $sum = 0;
+        foreach($finalMarksConfirmed as $mark){
+            $sum += $mark;
+        }
+        $finalScore = $sum / count($finalMarksConfirmed);
+    }
+
+    return Inertia::render('Home', [
+        'student' => $student, 
+        'user' => $user,
+        'subjects' => $studentsSubjects,
+        'studentClass' => $studentClass,
+        'numberOfAbsences' => $numberOfAbsences,
+        'activities' => $activities,
+        'parents' => $parents,
+        'finalMarks' => $finalMarks,
+        'professorsSubjects' => $professorsSubjects,
+        'finalScore' => $finalScore,
+    ]);
+
+})->middleware('auth');
+
 Route::get('/profesori', function () {
 
     $professors = User::where('type_id', 2)->get();
     $subjects = Subject::all();
     $user = Auth::user();
+
+    if(Auth::user()->type_id == 3){
+        return redirect("/pocetna");
+    }
 
     return Inertia::render('Professors', [
         'professors' => $professors,
@@ -87,21 +142,32 @@ Route::get('/ucenici', function () {
     $classes = SchoolClass::all();
     $user = Auth::user();
 
+    if(Auth::user()->type_id == 3){
+        return redirect("/pocetna");
+    }
+
     return Inertia::render('Students', [
         'students' => $students,
         'classes' => $classes,
         'user' => $user
     ]);
-});
+})->middleware('auth');
 
 Route::get('/dodaj-profesora', function () {
 
     $subjects = Subject::all();
 
+    if(Auth::user()->type_id == 3){
+        return redirect("/pocetna");
+    }
+
+    $user = Auth::user();
+
     return Inertia::render('AddProfessor',[
+        'user' => $user,
         'subjects' => $subjects
     ]);
-});
+})->middleware('auth');
 
 Route::post('/dodaj-profesora', [UserController::class, 'registerProfessor']);
 
@@ -109,10 +175,17 @@ Route::get('/dodaj-ucenika', function () {
 
     $classes = SchoolClass::all();
 
+    if(Auth::user()->type_id == 3){
+        return redirect("/pocetna");
+    }
+
+    $user = Auth::user();
+
     return Inertia::render('AddStudent', [
+        'user' => $user,
         'classes' => $classes,
     ]);
-});
+})->middleware('auth');
 
 Route::post('/dodaj-studenta', [UserController::class, 'registerStudent']);
 
@@ -124,11 +197,15 @@ Route::get('/dnevnik', function () {
                             ->orderBy('formatedDate', 'DESC')
                             ->get();
 
+    if(Auth::user()->type_id == 3){
+        return redirect("/pocetna");
+    }
+
     return Inertia::render('Lessons', [
         'user' => $user,
         'groupedLessons' => $groupedLessons
     ]);
-});
+})->middleware('auth');
 
 Route::get('/ucenik/{id}', function ($id) {
 
@@ -147,6 +224,10 @@ Route::get('/ucenik/{id}', function ($id) {
                                         ->pluck('final_mark')
                                         ->toArray();
     $finalScore = 0;
+
+    if(Auth::user()->type_id == 3){
+        return redirect("/pocetna");
+    }
 
     if(count($finalMarksConfirmed) > 0){
         $sum = 0;
@@ -168,7 +249,7 @@ Route::get('/ucenik/{id}', function ($id) {
         'professorsSubjects' => $professorsSubjects,
         'finalScore' => $finalScore,
     ]);
-});
+})->middleware('auth');
 
 Route::get('/profesor/{id}', function ($id) {
 
@@ -177,13 +258,17 @@ Route::get('/profesor/{id}', function ($id) {
     $user = Auth::user();
     $subjects = Subject::all();
 
+    if(Auth::user()->type_id == 3){
+        return redirect("/pocetna");
+    }
+
     return Inertia::render('Profesor',[
         'professor' => $professor,
         'professorSubjects' => $professorSubjects,
         'allSubjects' => $subjects,
         'user' => $user
     ]);
-});
+})->middleware('auth');
 
 Route::get('/upis-casova', function () {
 
@@ -192,12 +277,16 @@ Route::get('/upis-casova', function () {
     $subjects = $user->professorsSubjects()->get();
     $classes = SchoolClass::all();
 
+    if(Auth::user()->type_id == 3){
+        return redirect("/pocetna");
+    }
+
     return Inertia::render('AddLesson', [
         'user' => $user,
         'subjects' => $subjects,
         'classes' => $classes,
     ]);
-});
+})->middleware('auth');
 
 Route::post("/add-lesson", [LessonController::class, 'addLesson']);
 
@@ -211,14 +300,21 @@ Route::get("/cas/{id}", function (string $id) {
     $sclass = SchoolClass::firstWhere('id', $lesson->class_id);
     $className = $sclass->class_name;
 
+    if(Auth::user()->type_id == 3){
+        return redirect("/pocetna");
+    }
+
+    $user = Auth::user();
+
     return Inertia::render('LessonOverview', [
+        'user' => $user,
         'lesson' => $lesson,
         'professor' => $professor,
         'subject' => $subject,
         'absentStudents' => $absentStudents,
         'className' => $className,
     ]);
-});
+})->middleware('auth');
 
 Route::get("/nalog", function() {
 
@@ -227,7 +323,7 @@ Route::get("/nalog", function() {
     return Inertia::render('Account', [
         'user' => $user
     ]);
-});
+})->middleware('auth');
 
 Route::post("/change-password", [UserController::class, 'changePassword']);
 

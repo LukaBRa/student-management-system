@@ -1,6 +1,20 @@
-<script setup>
+<script>
 
 import SidebarLink from '../Components/SidebarLink.vue';
+
+export default{
+    components:{
+        SidebarLink,
+    },
+    props: [
+        'user',
+    ],
+    computed: {
+        isParent(){ 
+            return this.user.type_id == 3;
+        }
+    }
+}
 
 </script>
 
@@ -15,10 +29,11 @@ import SidebarLink from '../Components/SidebarLink.vue';
         </div>
 
         <div class="links">
-            <SidebarLink icon='<i class="fa-solid fa-house"></i>' title="Početna" linkTo="/administracija"/>
-            <SidebarLink icon='<i class="fa-solid fa-user-tie"></i>' title="Profesori" linkTo="/profesori"/>
-            <SidebarLink icon='<i class="fa-solid fa-user-graduate"></i>' title="Učenici" linkTo="/ucenici" />
-            <SidebarLink icon='<i class="fa-solid fa-book-bookmark"></i>' title="Dnevnik" linkTo="/dnevnik" />
+            <SidebarLink v-if="isParent" icon='<i class="fa-solid fa-house"></i>' title="Početna" linkTo="/pocetna"/>
+            <SidebarLink v-else icon='<i class="fa-solid fa-house"></i>' title="Početna" linkTo="/administracija"/>
+            <SidebarLink v-if="!isParent" icon='<i class="fa-solid fa-user-tie"></i>' title="Profesori" linkTo="/profesori"/>
+            <SidebarLink v-if="!isParent" icon='<i class="fa-solid fa-user-graduate"></i>' title="Učenici" linkTo="/ucenici" />
+            <SidebarLink v-if="!isParent" icon='<i class="fa-solid fa-book-bookmark"></i>' title="Dnevnik" linkTo="/dnevnik" />
             <SidebarLink icon='<i class="fa-solid fa-gear"></i>' title="Nalog" linkTo="/nalog" />        
         </div>
 

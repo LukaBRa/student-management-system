@@ -85,7 +85,7 @@ export default{
 
 <div class="container">
 
-    <Sidebar />
+    <Sidebar :user="user"/>
 
     <Message v-if="showMsg" :message="message"/>
 
