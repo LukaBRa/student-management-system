@@ -53,7 +53,7 @@ export default{
 
 <div class="container">
 
-    <Sidebar :user="user"/>
+    <Sidebar :user="user" active="Dnevnik"/>
 
     <Message v-if="showMessage" :message="message"/>
 

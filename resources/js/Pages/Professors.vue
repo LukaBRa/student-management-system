@@ -55,7 +55,7 @@ export default{
 
 <div class="container">
 
-    <Sidebar :user="user"/>
+    <Sidebar :user="user" active="Profesori"/>
 
     <div class="dashboard bg-light">
 

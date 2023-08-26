@@ -1,14 +1,25 @@
-<script setup>
+<script>
 
-
-const props = defineProps(['icon', 'title', 'linkTo']);
+export default{
+    props: [
+        'icon',
+        'title',
+        'linkTo',
+        'active'
+    ],
+    computed:{
+        isActive(){
+            return this.title == this.active;
+        }
+    }
+}
 
 
 </script>
 
 <template>
 
-<a :href="linkTo" class="bg-dark text-light">
+<a :href="linkTo" class="bg-dark text-light" :class="{ 'active': isActive }">
     <span v-html="icon"></span>
     {{ title }}
 </a>
@@ -27,6 +38,11 @@ a{
 
 a:hover{
     background-color: #474747;
+}
+
+.active{
+    background-color: #474747;
+    border-left: 5px solid var(--light-brown);
 }
 
 </style>

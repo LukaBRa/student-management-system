@@ -41,7 +41,7 @@ export default {
 
 <div class="container">
     
-    <Sidebar :user="user"/>
+    <Sidebar :user="user" active="Nalog"/>
 
     <Message v-if="showMessage" :message="message"/>
 

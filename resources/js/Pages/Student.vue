@@ -127,7 +127,7 @@ export default {
 
 <div class="container">
 
-    <Sidebar :user="user"/>
+    <Sidebar :user="user" active="None"/>
 
     <Message v-if="showMessage" :message="message"/>
 
