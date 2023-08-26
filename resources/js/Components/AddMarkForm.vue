@@ -7,6 +7,7 @@ export default{
         return {
             subjectId: 0,
             mark: 0,
+            errorMsg: '',
         }
     },
     props: [
@@ -16,17 +17,24 @@ export default{
     ],
     methods: {
         addMark() {
-            axios.post('http://localhost:8000/api/add-mark', {
-                subjectId: this.subjectId,
-                studentId: this.studentId,
-                mark: this.mark,
-            })
-            .then(response => {
-                if(response.data == "success"){
-                    this.$emit('success');
-                }
-            })
-            .catch(error => console.log(error));
+            if(this.subjectId == 0 || this.mark == 0){
+                this.errorMsg = "Popinite sva polja.";
+            }else{
+                axios.post('http://localhost:8000/api/add-mark', {
+                    subjectId: this.subjectId,
+                    studentId: this.studentId,
+                    mark: this.mark,
+                })
+                .then(response => {
+                    if(response.data == "success"){
+                        this.$emit('success');
+                    }
+                    if(response.data == "fail"){
+                        this.errorMsg = "Učeniku je zaključena ocena."
+                    }
+                })
+                .catch(error => console.log(error));
+            }
         }
     }
 }
@@ -67,6 +75,7 @@ export default{
                     <option value="Pismeni">Pismeni</option>
                 </select>
             </div>
+            <p class="error-msg">{{ errorMsg }}</p>
             <input type="submit" value="Upiši ocenu">
         </form>
     </div>
@@ -120,6 +129,10 @@ input[type="submit"]{
 input[type="submit"]:hover{
     background-color: #966560;
     border: 1px solid #966560;
+}
+
+.error-msg{
+    color: rgb(255, 110, 110);
 }
 
 </style>

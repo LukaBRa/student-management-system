@@ -11,6 +11,7 @@ import ConfirmMark from '../Components/ConfirmMark.vue';
 export default {
     data() {
         return {
+            studActivities: [],
             toggledTab: 'marks',
             showAddMarkForm: false,
             canAddMarksSubjects: [],
@@ -37,6 +38,7 @@ export default {
         'parents',
         'finalMarks',
         'professorsSubjects',
+        'finalScore'
     ],
     methods:{
         toggleMarksTab() {
@@ -68,16 +70,28 @@ export default {
             setTimeout(() => {
                 this.showMessage = false;
                 this.message = "";
-            }, 3000);
+                window.location.href = "http://localhost:8000/ucenik/" + this.student.id;
+            }, 1000);
         },
-        activityAddedHandle() {
-            this.message = "Uspešno je upisana aktivnost."
+        activityAddedHandle(activity) {
+            this.studActivities.push(activity);
+            this.message = "Uspešno je upisana aktivnost.";
             this.showMessage = true;
             this.showAddActivityForm = false;
             setTimeout(() => {
                 this.showMessage = false;
                 this.message = "";
             }, 3000);
+        },
+        handleMarkDeleted(){
+            this.message = "Uspešno je poništena zaključna ocena."
+            this.showMessage = true;
+            this.showAddMarkForm = false;
+            setTimeout(() => {
+                this.showMessage = false;
+                this.message = "";
+                window.location.href = "http://localhost:8000/ucenik/" + this.student.id;
+            }, 1000);
         },
         handleSuccessfullConfirmation() {
             this.toggleConfirmMark();
@@ -87,7 +101,8 @@ export default {
             setTimeout(() => {
                 this.showMessage = false;
                 this.message = "";
-            }, 3000);
+                window.location.href = "http://localhost:8000/ucenik/" + this.student.id;
+            }, 1000);
         }
     },
     computed: {
@@ -101,6 +116,9 @@ export default {
             return this.user.type_id == 2;
         },
     },
+    mounted() {
+        this.studActivities = this.activities;
+    }
 }
 
 </script>
@@ -161,7 +179,7 @@ export default {
                         <p class="data-box-accent">Broj izostanaka:</p>
                         <p>{{ numberOfAbsences }}</p>
                     </div>
-                    <h3 class="average-mark">Prosek: 4.40</h3>
+                    <h3 class="average-mark">Prosek: {{ finalScore }}</h3>
                     <div class="student-btn-group">
                         <button v-if="professorsRule" @click="toggleAddMarkForm">Upiši ocenu</button>
                         <button v-if="professorsRule" @click="toggleAddActivitiesForm">Upiši aktivnost</button>
@@ -177,7 +195,7 @@ export default {
                 </div>
 
                 <div class="marks-tab" v-if="showMarksTab">
-                    <StudentSubject @toggleConfirmMark="toggleConfirmMarkData" v-for="subject in subjects" :key="subject.id" :professorsSubjects="professorsSubjects" :user="user" :subject="subject" :student="student" :finalMarks="finalMarks"/>
+                    <StudentSubject @markDeleted="handleMarkDeleted" @toggleConfirmMark="toggleConfirmMarkData" v-for="subject in subjects" :key="student.id" :professorsSubjects="professorsSubjects" :user="user" :subject="subject" :student="student" :finalMarks="finalMarks"/>
                 </div>
 
                 <div class="activities-tab" v-if="showActivitiesTab">

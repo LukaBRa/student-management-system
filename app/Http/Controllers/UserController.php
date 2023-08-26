@@ -146,14 +146,10 @@ class UserController extends Controller
 
         $father->save();
 
-        if(count($request->subjectsChecked) != 0){
+        $subjects = Subject::all();
 
-            $subjects = Subject::whereIn('id', $request->subjectsChecked)->get();
-
-            foreach($subjects as $subject){
-                $student->studentsSubjects()->attach($subject);
-            }
-
+        foreach($subjects as $subject){
+            $student->studentsSubjects()->attach($subject);
         }
 
         $student->parents()->attach($mother);

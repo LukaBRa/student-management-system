@@ -24,9 +24,7 @@ export default {
                     description: this.description
                 })
                 .then(response => {
-                    if(response.data == "success"){
-                        this.$emit("success");
-                    }
+                        this.$emit("success", response.data);
                 })
                 .catch(error => console.log(error));
             }

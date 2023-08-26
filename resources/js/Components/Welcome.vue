@@ -16,8 +16,6 @@ export default {
         <p class="welcome-message">Dobrodošli, {{ userName }} <img src="/images/wave.png" width="30" height="30" /></p>
         <p class="message-secondary">na elektronski dnevnik</p>
     </div>
-    
-    <button class="small-btn"><i class="fa-regular fa-bell"></i></button>
 
 </div>
 

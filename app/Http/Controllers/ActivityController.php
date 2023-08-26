@@ -19,7 +19,7 @@ class ActivityController extends Controller
 
         $activity->save();
 
-        return response()->json('success');
+        return response()->json($activity);
     }
 
 }

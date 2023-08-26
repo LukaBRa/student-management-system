@@ -28,13 +28,35 @@ class MarkController extends Controller
 
     public function addMark(Request $request) {
 
-        $mark = new Mark;
+        $finalMark = StudentSubject::where('user_id', $request->studentId)
+                                    ->where('subject_id', $request->subjectId)
+                                    ->pluck('final_mark')
+                                    ->firstOrFail();
 
-        $mark->user_id = $request->studentId;
-        $mark->subject_id = $request->subjectId;
-        $mark->mark = $request->mark;
-        
-        $mark->save();
+        if(is_int($finalMark)){
+            return response()->json('fail');
+        }else{
+            $mark = new Mark;
+
+            $mark->user_id = $request->studentId;
+            $mark->subject_id = $request->subjectId;
+            $mark->mark = $request->mark;
+            
+            $mark->save();
+    
+            return response()->json('success');
+        }
+
+    }
+
+    public function deleteMark(Request $request) {
+
+        $record = StudentSubject::where('user_id', $request->studentId)
+                                ->where('subject_id', $request->subjectId)
+                                ->firstOrFail();
+
+        $record->final_mark = null;
+        $record->save();
 
         return response()->json('success');
     }

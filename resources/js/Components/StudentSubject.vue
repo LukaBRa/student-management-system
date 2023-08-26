@@ -18,6 +18,20 @@ export default{
         'finalMarks',
         'professorsSubjects'
     ],
+    methods: {
+        deleteMark() {
+            axios.post("http://localhost:8000/api/delete-mark", {
+                studentId: this.student.id,
+                subjectId: this.subject.id,
+            })
+            .then(response => {
+                if(response.data == "success"){
+                    this.$emit('markDeleted');
+                }
+            })
+            .catch(error => console.log(error));
+        }
+    },
     mounted() {
         this.finalMarks.forEach(mark => {
             if(mark.subject_id == this.subject.id){
@@ -54,6 +68,9 @@ export default{
         },
         averageScore() {
             return Math.round(this.averageMark * 100) / 100;
+        },
+        canDeleteFinalMark() {
+            return this.user.type_id == '1' ? true : false;
         }
     }
 }
@@ -77,6 +94,7 @@ export default{
             <button v-if="canConfirmMark" @click="$emit('toggleConfirmMark', subject.subject_name, subject.id, averageMark, student.id)" class="confirm-mark-btn">Zaključi ocenu</button>
             Nije zaključena ocena
         </span>
+        <button @click="deleteMark" v-if="canDeleteFinalMark && showFinalMark" class="confirm-mark-btn">Poništi ocenu</button>
     </div>
 </div>
 
@@ -111,6 +129,7 @@ export default{
     display: flex;
     gap: 0.5rem;
     align-items: baseline;
+    padding-right: 0.5rem;
 }
 
 .final-mark-accent{

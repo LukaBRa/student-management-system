@@ -17,14 +17,12 @@ export default {
             fatherName: '',
             motherPhoneNumber: '',
             fatherPhoneNumber: '',
-            subjectsChecked: [],
             classChecked: '',
         });
 
         return { form };
     },
     props: [
-        'subjects',
         'classes',
         'errors'
     ],
@@ -95,17 +93,6 @@ export default {
                             <input v-model="form.fatherPhoneNumber" type="text" placeholder="Broj telefona oca...">
                             <p class="error-text">{{ errors.fatherPhoneNumber }}</p>
                         </div>
-                        </div>
-                        <div class="form-part">
-                            <div class="form-input">
-                                <label>Predmeti</label>
-                                <div class="checkbox-group h-20">
-                                    <div class="checkbox-input" v-for="subject in subjects" :key="subject.id">
-                                        <input type="checkbox" :value="subject.id" v-model="form.subjectsChecked">
-                                        {{ subject.subject_name }}
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         <div class="form-part">
                             <div class="form-input">

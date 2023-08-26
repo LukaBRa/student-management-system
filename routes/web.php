@@ -107,11 +107,9 @@ Route::post('/dodaj-profesora', [UserController::class, 'registerProfessor']);
 
 Route::get('/dodaj-ucenika', function () {
 
-    $subjects = Subject::all();
     $classes = SchoolClass::all();
 
     return Inertia::render('AddStudent', [
-        'subjects' => $subjects,
         'classes' => $classes,
     ]);
 });
@@ -144,6 +142,19 @@ Route::get('/ucenik/{id}', function ($id) {
     $finalMarks = StudentSubject::where('user_id', $id)->get();
     $temp = User::firstWhere('id', $user->id);
     $professorsSubjects = $temp->professorsSubjects()->get();
+    $finalMarksConfirmed = StudentSubject::where('user_id', $id)
+                                        ->where('final_mark', "<>" , null)
+                                        ->pluck('final_mark')
+                                        ->toArray();
+    $finalScore = 0;
+
+    if(count($finalMarksConfirmed) > 0){
+        $sum = 0;
+        foreach($finalMarksConfirmed as $mark){
+            $sum += $mark;
+        }
+        $finalScore = $sum / count($finalMarksConfirmed);
+    }
 
     return Inertia::render('Student', [
         'student' => $student, 
@@ -154,7 +165,8 @@ Route::get('/ucenik/{id}', function ($id) {
         'activities' => $activities,
         'parents' => $parents,
         'finalMarks' => $finalMarks,
-        'professorsSubjects' => $professorsSubjects
+        'professorsSubjects' => $professorsSubjects,
+        'finalScore' => $finalScore,
     ]);
 });
 

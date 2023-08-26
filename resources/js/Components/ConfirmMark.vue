@@ -22,17 +22,21 @@ export default {
             if(this.finalMark == 0){
                 this.errorMsg = "Zaključna ocena je obavezna."
             }else{
-                axios.post("http://localhost:8000/api/confirm-mark", {
-                studentId: this.formStudentId,
-                subjectId: this.formSubjId,
-                finalMark: this.finalMark
-                })
-                .then(response => {
-                    if(response.data == "success"){
-                        this.$emit('success');
-                    }
-                })
-                .catch(error => console.log(error));
+                if(!(Math.round(this.formAverageScore * 100) / 100)){
+                    this.errorMsg = "Učenik još uvek nema ocene."
+                }else{
+                    axios.post("http://localhost:8000/api/confirm-mark", {
+                        studentId: this.formStudentId,
+                        subjectId: this.formSubjId,
+                        finalMark: this.finalMark
+                        })
+                        .then(response => {
+                            if(response.data == "success"){
+                                this.$emit('success');
+                            }
+                        })
+                        .catch(error => console.log(error));
+                }
             }
         }
     },

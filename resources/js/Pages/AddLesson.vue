@@ -66,6 +66,9 @@ export default{
                 if(response.data == "success"){
                     this.showMessage();
                     this.errorMsg = "";
+                    setTimeout(() => {
+                        window.location.href = "http://localhost:8000/dnevnik";
+                    }, 1000);
                 }else{
                     this.errorMsg = "Popunite sva polja.";
                 }
