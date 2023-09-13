@@ -131,7 +131,7 @@ export default {
 
     <Message v-if="showMessage" :message="message"/>
 
-    <AddMarkForm v-if="showAddMarkForm" @success="markAddedHandle" @toggleAddMarkForm="toggleAddMarkForm" :canAddMarkSubjects="professorsSubjects" :professorId="user.id" :studentId="student.id"/>
+    <AddMarkForm v-if="showAddMarkForm" @success="markAddedHandle" @toggleAddMarkForm="toggleAddMarkForm" :canAddMarkSubjects="subjects" :professorId="user.id" :studentId="student.id"/>
     <AddActivity v-if="showAddActivityForm" @toggleAddActivitiesForm="toggleAddActivitiesForm" :studentId="student.id" @success="activityAddedHandle"/>
     <ConfirmMark v-if="showConfirmMark" @success="handleSuccessfullConfirmation" @toggleConfirmMark="toggleConfirmMark" :formStudentId="formStudentId" :user="user"  :formSubjName="formSubjName" :formSubjId="formSubjId" :formAverageScore="formAverageScore" />
 
@@ -156,20 +156,12 @@ export default {
                         <p>{{ student.adress }}</p>
                     </div>
                     <div class="data-box">
-                        <p class="data-box-accent">Broj telefona:</p>
-                        <p>{{ student.phone_number }}</p>
-                    </div>
-                    <div class="data-box">
                         <p class="data-box-accent">Broj telefona majke:</p>
                         <p>{{ parents[0].phone_number }}</p>
                     </div>
                     <div class="data-box">
                         <p class="data-box-accent">Broj telefona oca:</p>
                         <p>{{ parents[1].phone_number }}</p>
-                    </div>
-                    <div class="data-box">
-                        <p class="data-box-accent">Email adresa roditelja:</p>
-                        <p>{{ parents[0].email }}</p>
                     </div>
                     <div class="data-box">
                         <p class="data-box-accent">Odeljenje:</p>
@@ -195,7 +187,7 @@ export default {
                 </div>
 
                 <div class="marks-tab" v-if="showMarksTab">
-                    <StudentSubject @markDeleted="handleMarkDeleted" @toggleConfirmMark="toggleConfirmMarkData" v-for="subject in subjects" :key="student.id" :professorsSubjects="professorsSubjects" :user="user" :subject="subject" :student="student" :finalMarks="finalMarks"/>
+                    <StudentSubject @markDeleted="handleMarkDeleted" @toggleConfirmMark="toggleConfirmMarkData" v-for="subject in subjects" :key="student.id" :professorsSubjects="subjects" :user="user" :subject="subject" :student="student" :finalMarks="finalMarks"/>
                 </div>
 
                 <div class="activities-tab" v-if="showActivitiesTab">
@@ -241,7 +233,7 @@ export default {
 }
 
 .student-data{
-    margin-top: 2rem;
+    margin-top: 1rem;
     width: 90%;
     padding: 2rem;
     display: flex;

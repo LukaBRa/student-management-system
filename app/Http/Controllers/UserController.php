@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Mail\SignUp;
+use App\Models\ProfessorClass;
 use App\Models\ProfessorSubject;
+use App\Models\SchoolClass;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -37,6 +39,14 @@ class UserController extends Controller
             return redirect()->back()->withErrors($validator);
         }
 
+        if($request->checkedSubject == null){
+            return redirect()->back()->withErrors(['invalidSubject' => 'Molimo Vas odaberite predmet.']);
+        }
+
+        if(count($request->checkedClasses) < 1){
+            return redirect()->back()->withErrors(['invalidClasses' => 'Molimo Vas odaberite odeljenja.']);
+        }
+
         $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
         $pass = array(); 
         $alphaLength = strlen($alphabet) - 1; 
@@ -58,14 +68,18 @@ class UserController extends Controller
 
         $professor->save();
 
-        if(count($request->checkedSubjects) != 0){
+        $subject = Subject::firstWhere('id', $request->checkedSubject);
 
-            $subjects = Subject::whereIn('id', $request->checkedSubjects)->get();
+        $professor->professorsSubjects()->attach($subject);
 
-            foreach($subjects as $subject){
-                $professor->professorsSubjects()->attach($subject);
-            }
+        $sclasses = SchoolClass::whereIn('id', $request->checkedClasses)->get();
 
+        foreach($sclasses as $sclass){
+            $professor_class_instance = new ProfessorClass;
+            $professor_class_instance->professor_id = $professor->id;
+            $professor_class_instance->class_id = $sclass->id;
+            $professor_class_instance->subject_id = $request->checkedSubject;
+            $professor_class_instance->save();
         }
 
         Mail::to($request->email)->send(new SignUp($request->name, $password));

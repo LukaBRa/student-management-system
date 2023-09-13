@@ -19,7 +19,9 @@ export default{
         'professor',
         'professorSubjects',
         'allSubjects',
-        'user'
+        'user',
+        'prClassesSubjects',
+        'allClasses'
     ],
     methods: {
         toggleForm(){
@@ -32,6 +34,9 @@ export default{
             setTimeout(() => {
                 window.location.href = "http://localhost:8000/profesor/" + this.professor.id;
             }, 1000);
+        },
+        getClasses(subjectId){
+            return this.prClassesSubjects.filter(el => el.subject_id == subjectId);
         }
     },
     computed: {
@@ -40,7 +45,7 @@ export default{
         },
         professorRule() {
             return this.user.type_id == 2;
-        }
+        },
     }
 }
 
@@ -55,7 +60,7 @@ export default{
 
     <Message v-if="showMessage" :message="msgText"/>
 
-    <AddSubjectProfessor v-if="showForm" :subjects="allSubjects" :professorId="professor.id" @toggleForm="toggleForm" @success="handleSubjectAdded"/>
+    <AddSubjectProfessor v-if="showForm" :allClasses="allClasses" :subjects="allSubjects" :professorId="professor.id" @toggleForm="toggleForm" @success="handleSubjectAdded"/>
 
     <div class="dashboard bg-light">
 
@@ -90,10 +95,14 @@ export default{
                                 <tr>
                                     <th>Šifra predmeta</th>
                                     <th>Naziv predmeta</th>
+                                    <th>Odeljenja</th>
                                 </tr>
                                 <tr v-for="subject in professorSubjects" :key="subject.id">
                                     <td>{{ subject.subject_code }}</td>
                                     <td>{{ subject.subject_name }}</td>
+                                    <td>
+                                        <p v-for="className in getClasses(subject.id)">{{ className.class_name }}</p>
+                                    </td>
                                 </tr>
                             </table>
                         </div>

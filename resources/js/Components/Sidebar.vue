@@ -13,6 +13,12 @@ export default{
     computed: {
         isParent(){ 
             return this.user.type_id == 3;
+        },
+        isProfessor(){
+            return this.user.type_id == 2;
+        },
+        isAdmin(){
+            return this.user.type_id == 1;
         }
     }
 }
@@ -32,7 +38,7 @@ export default{
         <div class="links">
             <SidebarLink v-if="isParent" icon='<i class="fa-solid fa-house"></i>' title="Početna" linkTo="/pocetna" :active="active"/>
             <SidebarLink v-else icon='<i class="fa-solid fa-house"></i>' title="Početna" linkTo="/administracija" :active="active"/>
-            <SidebarLink v-if="!isParent" icon='<i class="fa-solid fa-user-tie"></i>' title="Profesori" linkTo="/profesori" :active="active"/>
+            <SidebarLink v-if="isAdmin" icon='<i class="fa-solid fa-user-tie"></i>' title="Profesori" linkTo="/profesori" :active="active"/>
             <SidebarLink v-if="!isParent" icon='<i class="fa-solid fa-user-graduate"></i>' title="Učenici" linkTo="/ucenici" :active="active"/>
             <SidebarLink v-if="!isParent" icon='<i class="fa-solid fa-book-bookmark"></i>' title="Dnevnik" linkTo="/dnevnik" :active="active"/>
             <SidebarLink icon='<i class="fa-solid fa-gear"></i>' title="Nalog" linkTo="/nalog" :active="active"/>        

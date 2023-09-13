@@ -10,7 +10,8 @@ export default{
             email: '',
             adress: '',
             phoneNumber: '',
-            checkedSubjects: []
+            checkedSubject: null,
+            checkedClasses: [],
         });
 
         return { form };
@@ -21,6 +22,7 @@ export default{
     props: [
         'user',
         'subjects',
+        'classes',
         'errors'
     ],
     methods: {
@@ -72,13 +74,26 @@ export default{
                                 <label>Predmeti</label>
                                 <div class="checkbox-group">
                                     <div class="checkbox-input" v-for="subject in subjects" :key="subject.id">
-                                        <input type="checkbox" :value="subject.id" v-model="form.checkedSubjects">
-                                        {{ subject.subject_name }}
+                                        <input type="radio" :id="subject.id" name="subject_id" :value="subject.id" v-model="form.checkedSubject">
+                                        <label :for="subject.id">{{ subject.subject_name }}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-part">
+                            <div class="form-input">
+                                <label>Odeljenja</label>
+                                <div class="checkbox-group">
+                                    <div class="checkbox-input" v-for="sclass in classes" :key="sclass.id">
+                                        <input type="checkbox" :value="sclass.id" v-model="form.checkedClasses">
+                                        <label>{{ sclass.class_name }}</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <p class="error-text">{{ errors.invalidSubject }}</p>
+                    <p class="error-text">{{ errors.invalidClasses }}</p>
                     <input type="submit" value="Dodaj profesora">
                 </form>
             </div>
@@ -92,6 +107,7 @@ export default{
 
 <style>
 
+
 .professor-form{
     height: 100%;
     display: flex;
@@ -101,7 +117,7 @@ export default{
 
 .form-container{
     background-color: white;
-    width: 35rem;
+    width: 45rem;
     padding: 2rem;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     border-radius: 5px;
@@ -182,6 +198,12 @@ input[type="submit"]:hover{
     gap: 00.5rem;
     height: 14rem;
     overflow: auto;
+}
+
+.checkbox-input{
+    display: flex;
+    align-items: baseline;
+    gap: 0.2rem;
 }
 
 .error-text{

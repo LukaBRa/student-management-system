@@ -13,7 +13,7 @@ export default{
         showStudentIcon(){
             return this.type == "students";
         }
-    }
+    },
 }
 
 </script>

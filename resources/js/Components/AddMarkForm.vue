@@ -67,14 +67,6 @@ export default{
                     <option value="5">5</option>
                 </select>
             </div>
-            <div class="form-input">
-                <label>Izaberi opis ocene:</label>
-                <select>
-                    <option value="Kontrolni">Kontrolni</option>
-                    <option value="Usmeni">Usmeni</option>
-                    <option value="Pismeni">Pismeni</option>
-                </select>
-            </div>
             <p class="error-msg">{{ errorMsg }}</p>
             <input type="submit" value="Upiši ocenu">
         </form>

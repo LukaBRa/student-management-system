@@ -4,21 +4,26 @@ export default{
     data() {
         return {
             errorMsg: '',
-            checkedSubjects: [],
+            checkedSubject: null,
+            checkedClasses: [],
         }
     },
     props: [
         'subjects',
-        'professorId'
+        'professorId',
+        'allClasses'
     ],
     methods: {
         submitForm() {
-            if(this.checkedSubjects.length == 0){
+            if(this.checkedSubject == null){
                 this.errorMsg = "Izaberite predmet.";
+            }else if(this.checkedClasses.length == 0){
+                this.errorMsg = "Izaberite odeljenje.";
             }else{
                 axios.post("http://localhost:8000/api/add-subject", {
                     profId: this.professorId,
-                    subjects: this.checkedSubjects
+                    subject: this.checkedSubject,
+                    sClasses: this.checkedClasses, 
                 })
                 .then(response => {
                     if(response.data == "success"){
@@ -42,15 +47,24 @@ export default{
         </div>
         <h2>Dodaj predmet</h2>
         <form @submit.prevent="submitForm">
-            <label class="main-label">Predmeti: </label>
-            <div class="checkbox-group">
-                <div class="checkbox-input" v-for="subj in subjects">
-                    <input type="checkbox" v-model="checkedSubjects" name="checkedSubjects" :value="subj.id" :id="subj.id">
-                    <label :for="subj.id">{{ subj.subject_name }}</label>
+            <div class="form-flex">
+                <div class="checkbox-group">
+                    <label class="main-label">Predmeti: </label>
+                    <div class="checkbox-input" v-for="subj in subjects">
+                        <input type="radio" v-model="checkedSubject" name="checkedSubject" :value="subj.id" :id="subj.id">
+                        <label :for="subj.id">{{ subj.subject_name }}</label>
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <label class="main-label">Odeljenja: </label>
+                    <div class="checkbox-input" v-for="sclass in allClasses">
+                        <input type="checkbox" v-model="checkedClasses" :value="sclass.id" :id="sclass.id">
+                        <label>{{ sclass.class_name }}</label>
+                    </div>
                 </div>
             </div>
             <p class="error-msg">{{ errorMsg }}</p>
-            <input type="submit" value="Dodaj predmete">
+            <input type="submit" value="Dodaj predmet">
         </form>
     </div>
 </div>
@@ -74,6 +88,10 @@ form{
     width: 15rem;
 }
 
+.form-flex{
+    display: flex;
+    gap: 2rem;
+}
 .main-label{
     font-weight: bold;
     font-size: 1.2rem;

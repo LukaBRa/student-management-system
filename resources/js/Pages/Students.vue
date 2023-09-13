@@ -17,7 +17,8 @@ export default {
     props: [
         'students',
         'classes',
-        'user'
+        'user',
+        'profClasses'
     ],
     mounted() {
         this.pageUsers = [...this.students];
@@ -71,7 +72,7 @@ export default {
             </select>
         </div>
 
-        <UsersContainer :users="pageUsers" userType="students" :category="studentFilter"/>
+        <UsersContainer :users="pageUsers" userType="students" :category="studentFilter" :currentUser="user" :profClasses="profClasses"/>
 
     </div>
 

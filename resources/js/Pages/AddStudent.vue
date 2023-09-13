@@ -45,11 +45,11 @@ export default {
 
     <Sidebar :user="user" active="None"/>
 
-    <div class="dashboard bg-light">
+    <div class="dashboard bg-light overflow-auto">
 
         <div class="professor-form">
             <div class="form-container c-width">
-                <h2>Dodaj novog učenika</h2>
+                <h3>Dodaj novog učenika</h3>
             
                 <form @submit.prevent="submitForm">
                     <div class="form-flex-container">
@@ -122,6 +122,10 @@ export default {
 
 <style>
 
+.overflow-auto{
+    overflow-y: auto;
+}
+
 .professor-form{
     height: 100%;
     display: flex;
@@ -137,7 +141,7 @@ export default {
     border-radius: 5px;
 }
 
-.form-container h2{
+.form-container h3{
     text-align: center;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid lightgray;
@@ -147,7 +151,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    margin-top: 2rem;
+    margin-top: 1.2rem;
     width: 100%;
 }
 
@@ -195,7 +199,7 @@ input[type="submit"]{
     padding: 0.5rem;
     font-size: 1.1rem;
     border-radius: 20px;
-    margin-top: 1rem;
+    margin-top: 0rem;
     transition: all 0.3s ease;
     cursor: pointer;
 }

@@ -59,7 +59,7 @@ export default{
         this.tempSubjects = this.professorsSubjects;
         this.tempSubj = this.subject;
 
-        this.canConfirmMark = this.tempSubjects.some(s => s.id == this.tempSubj.id);
+        this.canConfirmMark = this.tempSubjects.some(subj => subj.id == this.tempSubj.id);
 
     },
     computed: {

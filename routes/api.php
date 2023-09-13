@@ -28,6 +28,8 @@ Route::get("/get-marks/{subject_id}/student/{student_id}", [MarkController::clas
 
 Route::get("/get-professor-subjects/{user_id}", [SubjectController::class, 'getSubjects']);
 
+Route::get("/get-class-subjects/{classId}/professor/{professorId}", [SubjectController::class, 'getProfessorsSubjects']);
+
 Route::post('/add-mark', [MarkController::class, 'addMark']);
 
 Route::post("/add-activity", [ActivityController::class, 'addActivity']);
