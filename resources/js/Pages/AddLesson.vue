@@ -8,43 +8,44 @@ import { useForm } from '@inertiajs/vue3';
 export default{
     data() {
         return {
+            subjects: [],
             students: [],
-            userId: '',
-            classId: '',
-            subjectId: '',
+            selectedSubject: '',
+            selectedStudents: [],
+            selectedClass: null,
+            showMsg: false,
+            message: '',
             lessonTitle: '',
             lessonDescription: '',
-            checkedStudents: [],
-            message: '',
-            showMsg: false,
+            lessonNumber: '',
+            lessonDate: null,
             errorMsg: '',
         }
     },
     mounted() {
-        this.userId = this.user.id;
+        
     },
     components: {
         Sidebar, Message
     },
     props: [
         'user',
-        'subjects',
         'classes',
         'errors'
     ],
     methods: {
-        showStudents() {
-            this.students = [];
-            if(this.classId == -1){
-                //
-            }else{
-                axios.get("http://localhost:8000/api/get-class-students/" + this.classId)
-                .then(response => {
-                    this.students = response.data;
-                })
-                .catch(error => console.log(error))
-            }
-        },
+        getData() {
+            axios.get("http://localhost:8000/api/get-class-subjects/ " + this.selectedClass + "/professor/" + this.user.id)
+            .then(response => {
+                this.subjects = response.data
+            })
+            .catch(error => console.log(error))
+            axios.get("http://localhost:8000/api/get-class-students/" + this.selectedClass)
+            .then(response => {
+                this.students = response.data
+            })
+            .catch(error => console.log(error))
+        },  
         showMessage() {
             this.message = "Čas je uspešno upisan."
             this.showMsg = true;
@@ -55,14 +56,17 @@ export default{
         },  
         submitForm() {
             axios.post("/add-lesson", {
-                userId: this.user.id,
-                subjectId: this.subjectId,
-                classId: this.classId,
+                professorId: this.user.id,
+                selectedStudents: this.selectedStudents,
+                classId: this.selectedClass,
+                subjectId: this.selectedSubject,
                 lessonTitle: this.lessonTitle,
                 lessonDescription: this.lessonDescription,
-                checkedStudents: this.checkedStudents
+                lessonNumber: this.lessonNumber,
+                lessonDate: this.lessonDate
             })
             .then(response => {
+                console.log(response)
                 if(response.data == "success"){
                     this.showMessage();
                     this.errorMsg = "";
@@ -72,7 +76,6 @@ export default{
                 }else{
                     this.errorMsg = "Popunite sva polja.";
                 }
-                console.log(response);
             }) 
             .catch(error => console.log(error));
         }
@@ -96,53 +99,66 @@ export default{
                 <h2>Upis časova</h2>
                 <p class="error-text">{{ errorMsg }}</p>
                 <form @submit.prevent="submitForm">
-                    <div class="form-flex-container">
+                    <div class="professor-form">
                         <div class="form-part">
-                            <div class="form-input">
-                                <label>Naziv teme</label>
-                                <input v-model="lessonTitle" type="text" placeholder="Tema...">
-                                <p class="error-text">{{ errors.lessonTitle }}</p>
+                            <div class="select-input">
+                                    <label for="sclass">Odaberite odeljenje:</label>
+                                    <select @change="getData" v-model="selectedClass" name="sclass" id="sclass">
+                                        <option value="null" default>Odeljenje...</option>
+                                        <option v-for="pClass in classes" :value="pClass.id">{{ pClass.class_name }}</option>
+                                    </select>
                             </div>
-                            <div class="form-input">
-                                <label>Odaberi predmet</label>
-                                <select v-model="subjectId">
-                                    <option value="">Predmet...</option>
-                                    <option v-for="subject in subjects" :key="subject.id" :value="subject.id">{{ subject.subject_name }}</option>
-                                </select>
-                                <p class="error-text">{{ errors.subjectId }}</p>
-                            </div>
-                            <div class="form-input">
-                                <label>Opis časa</label>
-                                <select v-model="lessonDescription">
-                                    <option value="">Opis...</option>
-                                    <option>Nova lekcija</option>
-                                    <option>Vežbanje</option>
-                                    <option>Sistematizacija</option>
-                                    <option>Kontrolni</option>
-                                    <option>Pismeni</option>
-                                </select>
-                                <p class="error-text">{{ errors.lessonDescription }}</p>
-                            </div>
-                            <div class="form-input">
-                                <label>Odaberi odeljenje</label>
-                                <select @change="showStudents" v-model="classId">
-                                    <option value="">Odeljenje...</option>
-                                    <option v-for="sclass in classes" :key="sclass.id" :value="sclass.id ">{{ sclass.class_name }}</option>
-                                </select>
-                                <p class="error-text">{{ errors.classId }}</p>
-                            </div>
+                        <div v-if="selectedClass" class="add-form">
+                            <div class="select-input">
+                            <label for="subject">Odaberite predmet:</label>
+                            <select v-model="selectedSubject" name="subject" id="subject">
+                                <option value="" default>Predmet...</option>
+                                <option v-for="subject in subjects" :value="subject.id">{{ subject.subject_name }}</option>
+                            </select>
                         </div>
-                        <div class="form-part">
-                            <div class="form-input">
-                                <label>Odsutni učenici</label>
-                                <div class="checkbox-group">
-                                    <div class="checkbox-input" v-for="student in students" :key="student.id">
-                                        <input v-model="checkedStudents" name="absentStudent" type="checkbox" :value="student.id">
-                                        <label>{{ student.name }}</label>
-                                    </div>
+                                <div class="form-input">
+                                    <label for="">Naziv teme</label>
+                                    <input v-model="lessonTitle" type="text" placeholder="Naziv teme...">
                                 </div>
+                                <div class="form-input">
+                                    <label for="">Opis časa</label>
+                                    <select v-model="lessonDescription">
+                                        <option value="Nova lekcija">Nova lekcija</option>
+                                        <option value="Vežbanje">Vežbanje</option>
+                                        <option value="Sistematizacija">Sistematizacija</option>
+                                        <option value="Kontrolni">Kontrolni</option>
+                                        <option value="Pismeni">Pismeni</option>
+                                    </select>
+                                </div>
+                                <div class="form-input">
+                                    <label for="">Redni broj časa</label>
+                                    <select v-model="lessonNumber">
+                                        <option value="" default>Redni broj...</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                    </select>
+                                </div>
+                                <div class="form-inout">
+                                    <label>Datum</label>
+                                    <input v-model="lessonDate" class="date-picker" type="date">
+                                </div>
+                        </div>
+                    </div>
+                    <div v-if="selectedClass" class="form-part">
+                        <label>Učenici</label>
+                        <div class="checkbox-group">
+                            <div v-for="student in students" class="checkbox-input">
+                                <input v-model="selectedStudents" :id="student.id" name="checkedStudents" type="checkbox" :value="student.id">
+                                <label :for="student.id">{{ student.name }}</label>
                             </div>
                         </div>
+                    </div>
                     </div>
                     <input type="submit" value="Upiši čas">
                 </form>
@@ -162,6 +178,7 @@ export default{
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 1rem;
 }
 
 .form-container{
@@ -259,6 +276,7 @@ input[type="submit"]:hover{
 .error-text{
     color: rgb(252, 57, 57);
     margin-top: 0.2rem;
+    text-align: center;
 }
 
 .checkbox-input{
@@ -266,5 +284,33 @@ input[type="submit"]:hover{
     gap: 0.4rem;
 }
 
+.select-input{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+select{
+    padding: 0.5rem;
+}
+
+.add-form{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.add-form.activeAditionalInputs{
+    display: flex;
+}
+
+label{
+    font-weight: bold;
+}
+
+.date-picker{
+    padding: 0.5rem;
+    margin-left: 1rem;
+}
 
 </style>

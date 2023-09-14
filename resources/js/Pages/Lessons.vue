@@ -1,8 +1,8 @@
 <script>
 
 import Sidebar from '../Components/Sidebar.vue';
-import LessonsDate from '../Components/LessonsDate.vue';
 import Message from '../Components/Message.vue';
+import LessonsDate from '../Components/LessonsDate.vue';
 
 export default{
     data() {
@@ -18,7 +18,7 @@ export default{
         'groupedLessons'
     ],
     components: {
-        Sidebar, LessonsDate, Message
+        Sidebar, Message, LessonsDate
     },
     computed: {
         professorRule() {
@@ -70,7 +70,7 @@ export default{
         </div>
 
         <div class="lessons-container">
-            <LessonsDate v-for="lessonDate in dates" :key="lessonDate.formatedDate" :date="lessonDate.formatedDate"/>
+            <LessonsDate />
         </div>
 
     </div>

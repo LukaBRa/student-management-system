@@ -19,7 +19,7 @@ class SubjectController extends Controller
     public function getProfessorsSubjects($classId, $professorId) {
 
         $subjects = DB::table('subjects as S')
-        ->select('subject_name')
+        ->select('*')
         ->join('professor_classes as PC', 'PC.subject_id', '=', 'S.id')
         ->where('PC.professor_id', '=', $professorId)
         ->where('PC.class_id', '=', $classId)

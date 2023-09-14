@@ -15,6 +15,8 @@ class Lesson extends Model
         'class_id',
         'lesson_title',
         'lesson_description',
+        'lesson_number',
+        'created_at'
     ];
 
 }

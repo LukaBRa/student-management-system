@@ -18,7 +18,9 @@ class LessonController extends Controller
             'subjectId' => 'required',
             'classId' => 'required',
             'lessonTitle' => 'required',
-            'lessonDescription' => 'required'
+            'lessonDescription' => 'required',
+            'lessonNumber' => 'required',
+            'lessonDate' => 'required'
         ]);
 
         if($validator->fails()){
@@ -26,19 +28,26 @@ class LessonController extends Controller
         }
 
         $lesson = new Lesson;
-        $lesson->user_id = $request->userId;
+
+        $lesson->user_id = $request->professorId;
         $lesson->subject_id = $request->subjectId;
         $lesson->class_id = $request->classId;
         $lesson->lesson_title = $request->lessonTitle;
         $lesson->lesson_description = $request->lessonDescription;
+        $lesson->lesson_number = $request->lessonNumber;
+        $lesson->created_at = $request->lessonDate;
         $lesson->save();
 
-            foreach($request->checkedStudents as $absentStudent){
+        if(count($request->selectedStudents) > 0){
+            foreach($request->selectedStudents as $student){
                 $absence = new Absence;
-                $absence->user_id = $absentStudent;
+                $absence->user_id = $student;
                 $absence->lesson_id = $lesson->id;
                 $absence->save();
             }
+        }
+
+        
 
         return response()->json('success');
 

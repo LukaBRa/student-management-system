@@ -50,6 +50,7 @@ export default {
     width: 100%;
     border: 1px solid rgb(173, 173, 173);
     padding: 0.5rem;
+    height: max-content;
 }
 .class-name{
     font-weight: bold;
@@ -96,7 +97,6 @@ export default {
     display: none;
     flex-wrap: wrap;
     overflow: auto;
-    gap: 1rem;
     transition: all 0.3s ease;
 }
 

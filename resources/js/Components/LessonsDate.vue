@@ -1,6 +1,6 @@
 <script>
 
-import LessonsComponent from '../Components/LessonsComponent.vue';
+import LessonsCard from './LessonsCard.vue';
 
 export default {
     data() {
@@ -9,18 +9,11 @@ export default {
         }
     },
     components: {
-        LessonsComponent
+        LessonsCard
     },
-    props: [
+    /* props: [
         'date',
-    ],
-    mounted() {
-        axios.get("http://localhost:8000/api/get-lessons/date/" + this.date)
-        .then(response => {
-            this.lessons = response.data;
-        })
-        .catch(error => console.log(error));
-    }
+    ], */
 }
 
 </script>
@@ -28,9 +21,9 @@ export default {
 <template>
 
 <div class="date-lessons-container">
-    <h3>{{ date }}</h3>
+    <h3>12.04.2023</h3>
     <div class="date-lessons-container-lessons">
-        <LessonsComponent v-for="lesson in lessons" :key="lesson.id" :lesson="lesson"/>
+        <LessonsCard />
     </div>
 </div>
 

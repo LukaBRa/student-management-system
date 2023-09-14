@@ -628,22 +628,26 @@ Route::get('/profesor/{id}', function ($id) {
 Route::get('/upis-casova', function () {
 
     $professor = Auth::user();
-    $user = User::firstWhere('id', $professor->id);
-    $subjects = $user->professorsSubjects()->get();
-    $classes = SchoolClass::all();
+    $classes = DB::table('school_classes as SC')
+    ->select('*')
+    ->distinct()
+    ->join('professor_classes as PC', 'PC.class_id', '=', 'SC.id')
+    ->where('PC.professor_id', '=', $professor->id)
+    ->get();
 
     if(Auth::user()->type_id == 3){
         return redirect("/pocetna");
     }
 
     return Inertia::render('AddLesson', [
-        'user' => $user,
-        'subjects' => $subjects,
+        'user' => $professor,
         'classes' => $classes,
     ]);
 })->middleware('auth');
 
 Route::post("/dodaj-cas", [LessonController::class, 'addLesson']);
+
+Route::post("/add-lesson", [LessonController::class, 'addLesson']);
 
 Route::get("/cas/{id}", function (string $id) {
 
