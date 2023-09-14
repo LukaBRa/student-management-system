@@ -1,6 +1,41 @@
 <script>
+import axios from 'axios';
 
 
+export default {
+    data() {
+        return {
+            tempArr: [],
+            classLessons: [],
+        }
+    },
+    props: [
+        'uniqueClass',
+        'lessons',
+        'user'
+    ],
+    mounted() {
+        this.tempArr = this.lessons;
+        this.classLessons = this.tempArr.filter(el => el.class_name == this.uniqueClass)
+        this.classLessons.sort((a,b) => a.lesson_number - b.lesson_number);
+        this.classLessons.forEach((item) => {
+            axios.get("http://localhost:8000/api/get-subject-name/" + item.subject_id)
+            .then(response => {
+                item.subject_name = response.data;
+                if(this.user.type_id == 2){
+                    if(item.user_id == this.user.id){
+                        item.canView = true;
+                    }else{
+                        item.canView = false;
+                    }
+                }else{
+                    item.canView = true;
+                }
+            })
+            .catch(error => console.log(error));
+        })
+    }
+}
 
 </script>
 
@@ -8,22 +43,17 @@
 
 <div class="lessons-card">
 
-    <h3>V-1</h3>
+    <h3>{{ uniqueClass }}</h3>
 
     <table>
         <tr>
             <th>Čas</th>
             <th>Predmet</th>
         </tr>
-        <tr>
-            <td>1.</td>
-            <td>Matematika</td>
-            <td>Detaljnije</td>
-        </tr>
-        <tr>
-            <td>2.</td>
-            <td>Srpski jezik</td>
-            <td>Detaljnije</td>
+        <tr v-for="tmpLesson in classLessons">
+            <td>{{ tmpLesson.lesson_number }}</td>
+            <td>{{ tmpLesson.subject_name }}</td>
+            <td><a v-if="tmpLesson.canView" class="lessons-link" :href="'/cas/' + tmpLesson.id">Detaljnije</a></td>
         </tr>
     </table>
 
@@ -37,6 +67,7 @@
     border: 1px solid lightgray;
     width: max-content;
     padding: 1rem;
+    min-height: 15rem;
 }
 
 h3{
@@ -58,6 +89,17 @@ td, th{
 
 tr:nth-child(even) {
   background-color: rgb(238, 237, 237);
+}
+
+.lessons-link{
+    font-size: 0.8rem;
+    background-color: var(--brown);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.lessons-link:hover{
+    background-color: #96635d;
 }
 
 </style>

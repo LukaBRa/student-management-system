@@ -70,7 +70,7 @@ export default{
         </div>
 
         <div class="lessons-container">
-            <LessonsDate />
+            <LessonsDate v-for="lessonDate in groupedLessons" :key="lessonDate.formatedDate" :user="user" :lessonDate="lessonDate"/>
         </div>
 
     </div>

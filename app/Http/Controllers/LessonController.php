@@ -47,7 +47,6 @@ class LessonController extends Controller
             }
         }
 
-        
 
         return response()->json('success');
 

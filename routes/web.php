@@ -530,6 +530,20 @@ Route::get('/dnevnik', function () {
                             ->groupBy('formatedDate')
                             ->orderBy('formatedDate', 'DESC')
                             ->get();
+    
+    $groupedLessons->each(function ($item) {
+        $formattedDate = \Carbon\Carbon::createFromFormat('d.m.Y', $item->formatedDate)->format('Y-m-d');
+        
+        $classes = DB::table('school_classes as SC')
+        ->select('*')
+        ->join('lessons as L', 'L.class_id', '=', 'SC.id')
+        ->whereDate('L.created_at', '=', $formattedDate)
+        ->distinct()
+        ->get();
+
+
+        $item->classes = $classes;
+    });
 
     if(Auth::user()->type_id == 3){
         return redirect("/pocetna");
@@ -628,11 +642,15 @@ Route::get('/profesor/{id}', function ($id) {
 Route::get('/upis-casova', function () {
 
     $professor = Auth::user();
-    $classes = DB::table('school_classes as SC')
+    $classes = DB::table('school_classes')
     ->select('*')
     ->distinct()
-    ->join('professor_classes as PC', 'PC.class_id', '=', 'SC.id')
-    ->where('PC.professor_id', '=', $professor->id)
+    ->where('id', '=', function($query) {
+        $query->select('class_id')
+        ->from('professor_classes')
+        ->where('professor_id', '=', Auth::user()->id)
+        ->get();
+    })
     ->get();
 
     if(Auth::user()->type_id == 3){

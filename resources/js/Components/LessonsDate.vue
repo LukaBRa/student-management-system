@@ -5,15 +5,20 @@ import LessonsCard from './LessonsCard.vue';
 export default {
     data() {
         return {
-            lessons: [],
+            uniqueClasses: [],
         }
     },
     components: {
         LessonsCard
     },
-    /* props: [
-        'date',
-    ], */
+    props: [
+        'lessonDate',
+        'user'
+    ],
+    mounted() {
+        this.tempArr = this.lessonDate.classes
+        this.uniqueClasses = [...new Set(this.tempArr.map(item => item.class_name))];
+    }
 }
 
 </script>
@@ -21,9 +26,9 @@ export default {
 <template>
 
 <div class="date-lessons-container">
-    <h3>12.04.2023</h3>
+    <h3>{{ lessonDate.formatedDate }}</h3>
     <div class="date-lessons-container-lessons">
-        <LessonsCard />
+        <LessonsCard v-for="uniqueClass in uniqueClasses" :key="uniqueClass" :user="user" :uniqueClass="uniqueClass" :lessons="this.tempArr"/>
     </div>
 </div>
 
@@ -44,7 +49,7 @@ export default {
     margin-top: 0.5rem;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: start;
     gap: 1rem;
 }
 

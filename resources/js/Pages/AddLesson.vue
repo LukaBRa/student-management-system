@@ -23,7 +23,6 @@ export default{
         }
     },
     mounted() {
-        
     },
     components: {
         Sidebar, Message
@@ -38,6 +37,7 @@ export default{
             axios.get("http://localhost:8000/api/get-class-subjects/ " + this.selectedClass + "/professor/" + this.user.id)
             .then(response => {
                 this.subjects = response.data
+                console.log(this.subjects)
             })
             .catch(error => console.log(error))
             axios.get("http://localhost:8000/api/get-class-students/" + this.selectedClass)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,14 +19,26 @@ class SubjectController extends Controller
 
     public function getProfessorsSubjects($classId, $professorId) {
 
-        $subjects = DB::table('subjects as S')
+        $subjects = DB::table('subjects')
         ->select('*')
-        ->join('professor_classes as PC', 'PC.subject_id', '=', 'S.id')
-        ->where('PC.professor_id', '=', $professorId)
-        ->where('PC.class_id', '=', $classId)
+        ->whereIn('id', function($query) use($classId, $professorId){
+            $query->select('subject_id')
+            ->from('professor_classes')
+            ->where('professor_id', '=', $professorId)
+            ->where('class_id', '=', $classId)
+            ->get();
+        })
         ->get();
 
         return response()->json($subjects);
+    }
+
+    public function getName($id){
+
+        $subject = Subject::where('id', $id)->get()->first();
+
+        return response()->json($subject->subject_name);
+
     }
 
 }
