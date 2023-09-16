@@ -98,6 +98,7 @@ export default {
     flex-wrap: wrap;
     overflow: auto;
     transition: all 0.3s ease;
+    gap: 0.5rem;
 }
 
 .class-students.activeStudents{

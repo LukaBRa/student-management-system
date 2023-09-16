@@ -62,14 +62,15 @@ export default {
 
         <div class="students-header">
             <a v-if="adminRule" href="/dodaj-ucenika" class="add-professor-link">Dodaj učenika <i class="fa-solid fa-plus"></i></a>
-            <div class="search-box">
+            <div v-if="adminRule" class="search-box">
                 <input type="text" @input="searchStudents" v-model="searchText" placeholder="Pretrazi učenike...">
                 <i class="fa-solid fa-magnifying-glass fa-rotate-90"></i>
             </div>
-            <select @change="srcByClassName" class="select-filter" v-model="studentFilter">
+            <select v-if="adminRule" @change="srcByClassName" class="select-filter" v-model="studentFilter">
                 <option value="0" default>Svi učenici</option>
                 <option v-for="cl in classes" :key="cl.id" :value="cl.id">{{ cl.class_name }}</option>
             </select>
+            <h2 v-if="!adminRule" >Učenici</h2>
         </div>
 
         <UsersContainer :users="pageUsers" userType="students" :category="studentFilter" :currentUser="user" :profClasses="profClasses"/>

@@ -118,7 +118,8 @@ export default {
             if(this.userType == "students" && this.category == 0){
                 this.containerTitle = "Svi učenici"
             }
-            this.isProfessor = this.currentUser.type_id == 2;  },
+            this.isProfessor = this.currentUser.type_id == 2;
+    },
 }
 
 </script>
@@ -126,12 +127,13 @@ export default {
 <template>
 
 <div class="users-container">
-    <h2>{{ containerTitle }}</h2>
+    <h2 v-if="!isProfessor">{{ containerTitle }}</h2>
+    <h2 v-else>Odeljenja</h2>
     <div v-if="!isProfessor" class="user-list">
         <UserCard  v-for="user in users" :key="user.id" :userId="user.id" :userName="user.name" :type="userType"/>
     </div>
 
-    <div class="professors-students user-list">
+    <div class="professors-students">
         <ClassCard v-for="pClass in profClasses" :key="pClass.id" :pClass="pClass" :currentUser="currentUser"/>
     </div>
 
@@ -165,6 +167,10 @@ export default {
 .professors-students{
     height: 75vh;
     overflow: auto;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 
