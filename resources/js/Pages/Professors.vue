@@ -71,7 +71,7 @@ export default{
             </select>
         </div>
 
-        <UsersContainer :users="pageUsers" userType="professors" :category="professorFilter"/>
+        <UsersContainer :users="pageUsers" userType="professors" :currentUser="user" :profClasses="[]" :category="professorFilter"/>
 
     </div>
 

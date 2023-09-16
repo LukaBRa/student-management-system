@@ -118,8 +118,7 @@ export default {
             if(this.userType == "students" && this.category == 0){
                 this.containerTitle = "Svi učenici"
             }
-            this.isProfessor = this.currentUser.type_id == 2;
-    },
+            this.isProfessor = this.currentUser.type_id == 2;  },
 }
 
 </script>

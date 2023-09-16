@@ -456,6 +456,7 @@ Route::get('/ucenici', function () {
             ->select('subject_name')
             ->join('professor_classes as PC', 'PC.subject_id', 'S.id')
             ->where('PC.class_id', '=', $item->id)
+            ->where('PC.professor_id', '=', Auth::user()->id)
             ->get();
 
             $tempStudents = User::where('class_id', $item->id)->get();
