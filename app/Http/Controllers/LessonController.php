@@ -7,6 +7,7 @@ use App\Models\Lesson;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class LessonController extends Controller
@@ -77,6 +78,20 @@ class LessonController extends Controller
                     ->whereDate('created_at', $dateQuery)
                     ->groupBy('formatedDate')
                     ->get();
+        
+                    $dates->each(function ($item) {
+                        $formattedDate = \Carbon\Carbon::createFromFormat('d.m.Y', $item->formatedDate)->format('Y-m-d');
+                        
+                        $classes = DB::table('school_classes as SC')
+                        ->select('*')
+                        ->join('lessons as L', 'L.class_id', '=', 'SC.id')
+                        ->whereDate('L.created_at', '=', $formattedDate)
+                        ->distinct()
+                        ->get();
+            
+            
+                    $item->classes = $classes;
+                });
 
         if(count($dates) > 0){
             $res = $dates[0];
@@ -93,6 +108,20 @@ class LessonController extends Controller
                             ->groupBy('formatedDate')
                             ->orderBy('formatedDate', 'DESC')
                             ->get();
+    
+        $groupedLessons->each(function ($item) {
+            $formattedDate = \Carbon\Carbon::createFromFormat('d.m.Y', $item->formatedDate)->format('Y-m-d');
+            
+            $classes = DB::table('school_classes as SC')
+            ->select('*')
+            ->join('lessons as L', 'L.class_id', '=', 'SC.id')
+            ->whereDate('L.created_at', '=', $formattedDate)
+            ->distinct()
+            ->get();
+
+
+        $item->classes = $classes;
+    });
 
         return response()->json($groupedLessons);
     }

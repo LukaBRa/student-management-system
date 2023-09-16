@@ -16,8 +16,10 @@ export default {
         'user'
     ],
     mounted() {
-        this.tempArr = this.lessonDate.classes
-        this.uniqueClasses = [...new Set(this.tempArr.map(item => item.class_name))];
+        if(this.lessonDate.classes){
+            this.tempArr = this.lessonDate.classes;
+            this.uniqueClasses = [...new Set(this.tempArr.map(item => item.class_name))];
+        }
     }
 }
 

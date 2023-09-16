@@ -41,6 +41,7 @@ export default{
             axios.get("http://localhost:8000/api/all-dates")
             .then(response => {
                 this.dates = response.data;
+                console.log(response.data);
             })
             .catch(error => console.log(error));
         }
@@ -70,7 +71,7 @@ export default{
         </div>
 
         <div class="lessons-container">
-            <LessonsDate v-for="lessonDate in groupedLessons" :key="lessonDate.formatedDate" :user="user" :lessonDate="lessonDate"/>
+            <LessonsDate v-for="lessonDate in dates" :key="lessonDate.formatedDate" :user="user" :lessonDate="lessonDate"/>
         </div>
 
     </div>
