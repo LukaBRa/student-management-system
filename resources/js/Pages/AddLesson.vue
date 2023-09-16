@@ -73,7 +73,9 @@ export default{
                     setTimeout(() => {
                         window.location.href = "http://localhost:8000/dnevnik";
                     }, 1000);
-                }else{
+                }else if(response.data == "lessonNumberError"){
+                    this.errorMsg = "Čas sa unetim rednim brojem već je upisan.";
+                }else if(response.data == "error"){
                     this.errorMsg = "Popunite sva polja.";
                 }
             }) 

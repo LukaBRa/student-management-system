@@ -27,6 +27,14 @@ class LessonController extends Controller
             return response()->json('error');
         }
 
+        $lessonNumberExists = Lesson::whereDate('created_at', '=', $request->lessonDate)
+                                    ->where('lesson_number', '=', $request->lessonNumber)
+                                    ->count(); 
+
+        if($lessonNumberExists > 0){
+            return response()->json('lessonNumberError');
+        }
+
         $lesson = new Lesson;
 
         $lesson->user_id = $request->professorId;

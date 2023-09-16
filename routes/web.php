@@ -646,7 +646,7 @@ Route::get('/upis-casova', function () {
     $classes = DB::table('school_classes')
     ->select('*')
     ->distinct()
-    ->where('id', '=', function($query) {
+    ->whereIn('id', function($query) {
         $query->select('class_id')
         ->from('professor_classes')
         ->where('professor_id', '=', Auth::user()->id)
