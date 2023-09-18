@@ -28,7 +28,7 @@ export default {
 <template>
 
 <div class="date-lessons-container">
-    <h3>{{ lessonDate.formatedDate }}</h3>
+    <h3> {{ lessonDate.dayOfWeek }} - {{ lessonDate.formatedDate }}</h3>
     <div class="date-lessons-container-lessons">
         <LessonsCard v-for="uniqueClass in uniqueClasses" :key="uniqueClass" :user="user" :uniqueClass="uniqueClass" :lessons="this.tempArr"/>
     </div>

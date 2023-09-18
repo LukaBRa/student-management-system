@@ -1,10 +1,11 @@
 <script>
 
 import Sidebar from '../Components/Sidebar.vue';
+import Activity from '../Components/Activity.vue';
 
 export default{
     components: {
-        Sidebar
+        Sidebar, Activity
     },
     props: [
         'user',
@@ -12,7 +13,8 @@ export default{
         'professor',
         'subject',
         'absentStudents',
-        'className'
+        'className',
+        'activities'
     ],
     mounted() {
         console.log(this.className)
@@ -62,13 +64,16 @@ export default{
                         <p>{{ className }}</p>
                     </div>
 
-                </div>
-
-                <div class="table-part">
                     <div class="data-box-column">
                         <p class="bold-accent">Odsutni studenti:</p>
                         <p v-for="student in absentStudents" :key="student.id">- {{ student.name }}</p>
                     </div>
+
+                </div>
+
+                <div class="table-part activities-part">
+                    <h3>Aktivnosti</h3>
+                    <Activity v-for="activity in activities" :key="activity.id" :activity="activity" :studentName="activity.student.name"/>
                 </div>
 
             </div>
@@ -109,6 +114,14 @@ export default{
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
+}
+
+.activities-part{
+    overflow: auto;
+}
+
+.activities-part h3{
+    margin-bottom: 1rem;
 }
 
 .data-box{

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Facades\Date;
 use Inertia\Inertia;
 use App\Models\Lesson;
 use App\Models\Absence;
@@ -18,6 +19,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Mark;
 
 /*
 |--------------------------------------------------------------------------
@@ -350,7 +352,11 @@ Route::get("/administracija", function () {
     $numberOfStudents = User::where('type_id', 4)->count();
     $numberOfProfessors = User::where('type_id', 2)->count();
     $lessons = Lesson::all();
-    $activities = Activity::all();
+    $activities = $activities = DB::table('activities as A')
+    ->select('*')
+    ->join('lessons as L', 'L.id', '=', 'A.lesson_id')
+    ->orderBy('L.created_at', 'desc')
+    ->get();
     $lessonGroups = Lesson::selectRaw("lesson_description,count(id) as count")
                         ->groupBy('lesson_description')
                         ->get()
@@ -361,6 +367,64 @@ Route::get("/administracija", function () {
                                foreach($a1 as $k => $v) {
                                    $result[] = [$v, $a2[$k]];
                                }
+
+                               $activities->each(function($item) {
+
+                                $professor = DB::table('users')
+                                            ->where('id', function($query) use ($item) {
+                                                $query->select('user_id')
+                                                ->from('lessons')
+                                                ->where('id', $item->lesson_id)
+                                                ->first();
+                                            })
+                                            ->first();
+                        
+                                $subject = DB::table('subjects')
+                                            ->where('id', function($query) use ($item) {
+                                                $query->select('subject_id')
+                                                ->from('lessons')
+                                                ->where('id', $item->lesson_id)
+                                                ->first();
+                                            })
+                                            ->first();
+                        
+                                $lesson = Lesson::selectRaw('DATE_FORMAT(created_at, "%d.%m.%Y") as formatedDate')
+                                                    ->where('id', '=', $item->lesson_id)->first();
+                                $lessonDate = $lesson->formatedDate;
+                                $dayOfWeek = Carbon::parse($lessonDate)->dayOfWeek;
+                        
+                                switch($dayOfWeek){
+                                    case 0:
+                                        $item->dayOfWeek = "Subota";
+                                        break;
+                                    case 1:
+                                        $item->dayOfWeek = "Ponedeljak";
+                                        break;
+                                    case 2:
+                                        $item->dayOfWeek = "Utorak";
+                                        break;
+                                    case 3:
+                                        $item->dayOfWeek = "Sreda";
+                                        break;
+                                    case 4:
+                                        $item->dayOfWeek = "Četvrtak";
+                                        break;
+                                    case 5:
+                                        $item->dayOfWeek = "Petak";
+                                        break;
+                                    case 6:
+                                        $item->dayOfWeek = "Nedelja";
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                $item->lessonDate = $lessonDate;
+                                $item->professorName = $professor->name;
+                                $item->subjectName = $subject->subject_name;
+                        
+                            });
+
+    $activities->sortByDesc('lessonDate');
 
     if(Auth::user()->type_id == 3){
         return redirect("/pocetna");
@@ -384,7 +448,11 @@ Route::get("/pocetna", function() {
     $studentsSubjects = $student->studentsSubjects()->get();
     $studentClass = SchoolClass::firstWhere('id', $student->class_id);
     $numberOfAbsences = Absence::where('user_id', $student->id)->count();
-    $activities = Activity::where('user_id', $student->id)->get();
+    $activities = $activities = DB::table('activities as A')
+    ->select('*')
+    ->join('lessons as L', 'L.id', '=', 'A.lesson_id')
+    ->orderBy('L.created_at', 'desc')
+    ->get();
     $parents = $student->parents()->get();
     $finalMarks = StudentSubject::where('user_id', $student->id)->get();
     $temp = User::firstWhere('id', $user->id);
@@ -395,6 +463,23 @@ Route::get("/pocetna", function() {
                                         ->toArray();
     $finalScore = 0;
 
+    $studentsSubjects->each(function($subj) use ($student){
+        $marks = Mark::where('user_id', $student->id)
+                    ->where('subject_id', $subj->id)
+                    ->get();
+        $averageMark = Mark::where('user_id', $student->id)
+        ->where('subject_id', $subj->id)
+        ->avg('mark');
+
+        $finalMarkTemp = StudentSubject::where('user_id', $student->id)
+                                        ->where('subject_id', $subj->id)
+                                        ->first();
+        
+        $subj->finalMark = $finalMarkTemp->final_mark;
+        $subj->marks = $marks;
+        $subj->avgMark = round($averageMark, 2);
+    });
+
     if(count($finalMarksConfirmed) > 0){
         $sum = 0;
         foreach($finalMarksConfirmed as $mark){
@@ -402,6 +487,62 @@ Route::get("/pocetna", function() {
         }
         $finalScore = $sum / count($finalMarksConfirmed);
     }
+
+    $activities->each(function($item) {
+
+        $professor = DB::table('users')
+                    ->where('id', function($query) use ($item) {
+                        $query->select('user_id')
+                        ->from('lessons')
+                        ->where('id', $item->lesson_id)
+                        ->first();
+                    })
+                    ->first();
+
+        $subject = DB::table('subjects')
+                    ->where('id', function($query) use ($item) {
+                        $query->select('subject_id')
+                        ->from('lessons')
+                        ->where('id', $item->lesson_id)
+                        ->first();
+                    })
+                    ->first();
+
+        $lesson = Lesson::selectRaw('DATE_FORMAT(created_at, "%d.%m.%Y") as formatedDate')
+                            ->where('id', '=', $item->lesson_id)->first();
+        $lessonDate = $lesson->formatedDate;
+        $dayOfWeek = Carbon::parse($lessonDate)->dayOfWeek;
+
+        switch($dayOfWeek){
+            case 0:
+                $item->dayOfWeek = "Subota";
+                break;
+            case 1:
+                $item->dayOfWeek = "Ponedeljak";
+                break;
+            case 2:
+                $item->dayOfWeek = "Utorak";
+                break;
+            case 3:
+                $item->dayOfWeek = "Sreda";
+                break;
+            case 4:
+                $item->dayOfWeek = "Četvrtak";
+                break;
+            case 5:
+                $item->dayOfWeek = "Petak";
+                break;
+            case 6:
+                $item->dayOfWeek = "Nedelja";
+                break;
+            default:
+                break;
+        }
+        $item->lessonDate = $lessonDate;
+        $item->professorName = $professor->name;
+        $item->subjectName = $subject->subject_name;
+
+    });
 
     return Inertia::render('Home', [
         'student' => $student, 
@@ -534,6 +675,8 @@ Route::get('/dnevnik', function () {
     
     $groupedLessons->each(function ($item) {
         $formattedDate = \Carbon\Carbon::createFromFormat('d.m.Y', $item->formatedDate)->format('Y-m-d');
+
+        $dayOfWeek = Carbon::parse($item->formatedDate)->dayOfWeek;
         
         $classes = DB::table('school_classes as SC')
         ->select('*')
@@ -542,9 +685,36 @@ Route::get('/dnevnik', function () {
         ->distinct()
         ->get();
 
-
+        
+        switch($dayOfWeek){
+            case 0:
+                $item->dayOfWeek = "Subota";
+                break;
+            case 1:
+                $item->dayOfWeek = "Ponedeljak";
+                break;
+            case 2:
+                $item->dayOfWeek = "Utorak";
+                break;
+            case 3:
+                $item->dayOfWeek = "Sreda";
+                break;
+            case 4:
+                $item->dayOfWeek = "Četvrtak";
+                break;
+            case 5:
+                $item->dayOfWeek = "Petak";
+                break;
+            case 6:
+                $item->dayOfWeek = "Nedelja";
+                break;
+            default:
+                break;
+        }
+        
         $item->classes = $classes;
     });
+
 
     if(Auth::user()->type_id == 3){
         return redirect("/pocetna");
@@ -563,16 +733,78 @@ Route::get('/ucenik/{id}', function ($id) {
     $studentsSubjects = null;
     $studentClass = SchoolClass::firstWhere('id', $student->class_id);
     $numberOfAbsences = Absence::where('user_id', $student->id)->count();
-    $activities = Activity::where('user_id', $student->id)->get();
+    $activities = DB::table('activities as A')
+                    ->select('*')
+                    ->join('lessons as L', 'L.id', '=', 'A.lesson_id')
+                    ->orderBy('L.created_at', 'desc')
+                    ->get();
     $parents = $student->parents()->get();
     $finalMarks = StudentSubject::where('user_id', $id)->get();
     $temp = User::firstWhere('id', $user->id);
+    $professorLessons = [];
     $professorsSubjects = $temp->professorsSubjects()->get();
     $finalMarksConfirmed = StudentSubject::where('user_id', $id)
                                         ->where('final_mark', "<>" , null)
                                         ->pluck('final_mark')
                                         ->toArray();
     $finalScore = 0;
+
+    $activities->each(function($item) {
+
+        $professor = DB::table('users')
+                    ->where('id', function($query) use ($item) {
+                        $query->select('user_id')
+                        ->from('lessons')
+                        ->where('id', $item->lesson_id)
+                        ->first();
+                    })
+                    ->first();
+
+        $subject = DB::table('subjects')
+                    ->where('id', function($query) use ($item) {
+                        $query->select('subject_id')
+                        ->from('lessons')
+                        ->where('id', $item->lesson_id)
+                        ->first();
+                    })
+                    ->first();
+
+        $lesson = Lesson::selectRaw('DATE_FORMAT(created_at, "%d.%m.%Y") as formatedDate')
+                            ->where('id', '=', $item->lesson_id)->first();
+        $lessonDate = $lesson->formatedDate;
+        $dayOfWeek = Carbon::parse($lessonDate)->dayOfWeek;
+
+        switch($dayOfWeek){
+            case 0:
+                $item->dayOfWeek = "Subota";
+                break;
+            case 1:
+                $item->dayOfWeek = "Ponedeljak";
+                break;
+            case 2:
+                $item->dayOfWeek = "Utorak";
+                break;
+            case 3:
+                $item->dayOfWeek = "Sreda";
+                break;
+            case 4:
+                $item->dayOfWeek = "Četvrtak";
+                break;
+            case 5:
+                $item->dayOfWeek = "Petak";
+                break;
+            case 6:
+                $item->dayOfWeek = "Nedelja";
+                break;
+            default:
+                break;
+        }
+        $item->lessonDate = $lessonDate;
+        $item->professorName = $professor->name;
+        $item->subjectName = $subject->subject_name;
+
+    });
+
 
     if(Auth::user()->type_id == 2){
         $studentsSubjects = DB::table('subjects as S')
@@ -581,9 +813,67 @@ Route::get('/ucenik/{id}', function ($id) {
         ->where('PC.professor_id', '=', $user->id)
         ->where('PC.class_id', '=', $student->class_id)
         ->get();
+
+        $professorLessons = Lesson::where('user_id', Auth::user()->id)->get();
+
+        $professorLessons->each(function($item) {
+
+            $subjectName = Subject::where('id', $item->subject_id)->first();
+            $dayOfWeek = Carbon::parse($item->created_at)->dayOfWeek;
+            $formatedDate = Lesson::selectRaw('DATE_FORMAT(created_at, "%d.%m.%Y") as formatedDate')
+                            ->where('id', $item->id)
+                            ->first();
+        
+            $item->subjectName = $subjectName->subject_name;
+            switch($dayOfWeek){
+                case 1:
+                    $item->dayOfWeek = "Ponedeljak";
+                    break;
+                case 2:
+                    $item->dayOfWeek = "Utorak";
+                    break;
+                case 3:
+                    $item->dayOfWeek = "Sreda";
+                    break;
+                case 4:
+                    $item->dayOfWeek = "Četvrtak";
+                    break;
+                case 5:
+                    $item->dayOfWeek = "Petak";
+                    break;
+                case 6:
+                    $item->dayOfWeek = "Subota";
+                    break;
+                case 7:
+                    $item->dayOfWeek = "Nedelja";
+                    break;
+                default:
+                    break;
+            }
+            $item->formatedDate = $formatedDate->formatedDate; 
+
+        });
+
     }else{
         $studentsSubjects = $student->studentsSubjects()->get();
     }
+
+    $studentsSubjects->each(function($subj) use ($student){
+        $marks = Mark::where('user_id', $student->id)
+                    ->where('subject_id', $subj->id)
+                    ->get();
+        $averageMark = Mark::where('user_id', $student->id)
+        ->where('subject_id', $subj->id)
+        ->avg('mark');
+
+        $finalMarkTemp = StudentSubject::where('user_id', $student->id)
+                                        ->where('subject_id', $subj->id)
+                                        ->first();
+        
+        $subj->finalMark = $finalMarkTemp->final_mark;
+        $subj->marks = $marks;
+        $subj->avgMark = round($averageMark, 2);
+    });
 
     if(Auth::user()->type_id == 3){
         return redirect("/pocetna");
@@ -608,6 +898,7 @@ Route::get('/ucenik/{id}', function ($id) {
         'finalMarks' => $finalMarks,
         'professorsSubjects' => $professorsSubjects,
         'finalScore' => $finalScore,
+        'professorLessons' => $professorLessons,
     ]);
 })->middleware('auth');
 
@@ -677,6 +968,66 @@ Route::get("/cas/{id}", function (string $id) {
     $absentStudents = User::whereIn('id', $absences)->get();
     $sclass = SchoolClass::firstWhere('id', $lesson->class_id);
     $className = $sclass->class_name;
+    $activities = Activity::where('lesson_id', $id)->get();
+
+    $activities->each(function($item) {
+
+        $professor = DB::table('users')
+                    ->where('id', function($query) use ($item) {
+                        $query->select('user_id')
+                        ->from('lessons')
+                        ->where('id', $item->lesson_id)
+                        ->first();
+                    })
+                    ->first();
+
+        $subject = DB::table('subjects')
+                    ->where('id', function($query) use ($item) {
+                        $query->select('subject_id')
+                        ->from('lessons')
+                        ->where('id', $item->lesson_id)
+                        ->first();
+                    })
+                    ->first();
+
+        $student = User::firstWhere('id', $item->user_id);
+
+        $lesson = Lesson::selectRaw('DATE_FORMAT(created_at, "%d.%m.%Y") as formatedDate')
+                            ->where('id', '=', $item->lesson_id)->first();
+        $lessonDate = $lesson->formatedDate;
+        $dayOfWeek = Carbon::parse($lessonDate)->dayOfWeek;
+
+        switch($dayOfWeek){
+            case 0:
+                $item->dayOfWeek = "Subota";
+                break;
+            case 1:
+                $item->dayOfWeek = "Ponedeljak";
+                break;
+            case 2:
+                $item->dayOfWeek = "Utorak";
+                break;
+            case 3:
+                $item->dayOfWeek = "Sreda";
+                break;
+            case 4:
+                $item->dayOfWeek = "Četvrtak";
+                break;
+            case 5:
+                $item->dayOfWeek = "Petak";
+                break;
+            case 6:
+                $item->dayOfWeek = "Nedelja";
+                break;
+            default:
+                break;
+        }
+        $item->student = $student;
+        $item->lessonDate = $lessonDate;
+        $item->professorName = $professor->name;
+        $item->subjectName = $subject->subject_name;
+
+    });
 
     if(Auth::user()->type_id == 3){
         return redirect("/pocetna");
@@ -691,6 +1042,7 @@ Route::get("/cas/{id}", function (string $id) {
         'subject' => $subject,
         'absentStudents' => $absentStudents,
         'className' => $className,
+        'activities' => $activities,
     ]);
 })->middleware('auth');
 

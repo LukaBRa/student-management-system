@@ -13,7 +13,7 @@ class ActivityController extends Controller
         $activity = new Activity;
 
         $activity->user_id = $request->studentId;
-        $activity->lesson_id = 1;
+        $activity->lesson_id = $request->lessonId;
         $activity->activity_type = $request->actType;
         $activity->comment = $request->description;
 

@@ -38,7 +38,8 @@ export default {
         'parents',
         'finalMarks',
         'professorsSubjects',
-        'finalScore'
+        'finalScore',
+        'professorLessons'
     ],
     methods:{
         toggleMarksTab() {
@@ -74,14 +75,14 @@ export default {
             }, 1000);
         },
         activityAddedHandle(activity) {
-            this.studActivities.push(activity);
             this.message = "Uspešno je upisana aktivnost.";
             this.showMessage = true;
             this.showAddActivityForm = false;
             setTimeout(() => {
                 this.showMessage = false;
                 this.message = "";
-            }, 3000);
+                window.location.href = "http://localhost:8000/ucenik/" + this.student.id;
+            }, 1000);
         },
         handleMarkDeleted(){
             this.message = "Uspešno je poništena zaključna ocena."
@@ -132,7 +133,7 @@ export default {
     <Message v-if="showMessage" :message="message"/>
 
     <AddMarkForm v-if="showAddMarkForm" @success="markAddedHandle" @toggleAddMarkForm="toggleAddMarkForm" :canAddMarkSubjects="subjects" :professorId="user.id" :studentId="student.id"/>
-    <AddActivity v-if="showAddActivityForm" @toggleAddActivitiesForm="toggleAddActivitiesForm" :studentId="student.id" @success="activityAddedHandle"/>
+    <AddActivity v-if="showAddActivityForm" @toggleAddActivitiesForm="toggleAddActivitiesForm" :professorLessons="professorLessons" :studentId="student.id" @success="activityAddedHandle"/>
     <ConfirmMark v-if="showConfirmMark" @success="handleSuccessfullConfirmation" @toggleConfirmMark="toggleConfirmMark" :formStudentId="formStudentId" :user="user"  :formSubjName="formSubjName" :formSubjId="formSubjId" :formAverageScore="formAverageScore" />
 
     <div class="dashboard bg-light">

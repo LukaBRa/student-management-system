@@ -101,7 +101,7 @@ export default{
                 <h2>Upis časova</h2>
                 <p class="error-text">{{ errorMsg }}</p>
                 <form @submit.prevent="submitForm">
-                    <div class="professor-form">
+                    <div class="form-flex-container">
                         <div class="form-part">
                             <div class="select-input">
                                     <label for="sclass">Odaberite odeljenje:</label>
@@ -110,14 +110,14 @@ export default{
                                         <option v-for="pClass in classes" :value="pClass.id">{{ pClass.class_name }}</option>
                                     </select>
                             </div>
-                        <div v-if="selectedClass" class="add-form">
-                            <div class="select-input">
-                            <label for="subject">Odaberite predmet:</label>
-                            <select v-model="selectedSubject" name="subject" id="subject">
-                                <option value="" default>Predmet...</option>
-                                <option v-for="subject in subjects" :value="subject.id">{{ subject.subject_name }}</option>
-                            </select>
-                        </div>
+                            <div v-if="selectedClass" class="add-form">
+                                <div class="select-input">
+                                <label for="subject">Odaberite predmet:</label>
+                                <select v-model="selectedSubject" name="subject" id="subject">
+                                    <option value="" default>Predmet...</option>
+                                    <option v-for="subject in subjects" :value="subject.id">{{ subject.subject_name }}</option>
+                                </select>
+                            </div>
                                 <div class="form-input">
                                     <label for="">Naziv teme</label>
                                     <input v-model="lessonTitle" type="text" placeholder="Naziv teme...">
@@ -125,6 +125,7 @@ export default{
                                 <div class="form-input">
                                     <label for="">Opis časa</label>
                                     <select v-model="lessonDescription">
+                                        <option value="" default>Opis...</option>
                                         <option value="Nova lekcija">Nova lekcija</option>
                                         <option value="Vežbanje">Vežbanje</option>
                                         <option value="Sistematizacija">Sistematizacija</option>
@@ -150,6 +151,7 @@ export default{
                                     <label>Datum</label>
                                     <input v-model="lessonDate" class="date-picker" type="date">
                                 </div>
+                                
                         </div>
                     </div>
                     <div v-if="selectedClass" class="form-part">
@@ -173,7 +175,7 @@ export default{
 
 </template>
 
-<style>
+<style scoped>
 
 .professor-form{
     height: 100%;

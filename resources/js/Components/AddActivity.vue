@@ -8,20 +8,23 @@ export default {
             activityType: 'positive',
             description: '',
             errorMessage: '',
+            lessonId: '',
         }
     },
     props: [
-        'studentId'
+        'studentId',
+        'professorLessons'
     ],
     methods: {
         addActivity() {
-            if(this.description == ''){
-                this.errorMessage = "Opis aktivnosti je obavezan";
+            if(this.description == '' || this.lessonId == ''){
+                this.errorMessage = "Popunite sva polja.";
             }else{
                 axios.post("http://localhost:8000/api/add-activity", {
                     studentId: this.studentId,
                     actType: this.activityType,
-                    description: this.description
+                    description: this.description,
+                    lessonId: this.lessonId,
                 })
                 .then(response => {
                         this.$emit("success", response.data);
@@ -61,6 +64,13 @@ export default {
                         <label for="negative"><i class="fa-regular fa-face-tired"></i></label>
                     </div>
                 </div>
+            </div>
+            <div class="form-input">
+                <label for="choose-lesson">Odaberite čas</label>
+                <select id="choose-lesson" v-model="lessonId">
+                    <option value="" default>Čas...</option>
+                    <option v-for="lesson in professorLessons" :value="lesson.id">{{ lesson.dayOfWeek }} - {{ lesson.formatedDate }} - {{ lesson.subjectName }}</option>
+                </select>
             </div>
             <div class="form-input">
                 <label>Opis aktivnosti</label>
@@ -153,6 +163,11 @@ input[type="submit"]:hover{
 
 .error-txt{
     color: rgb(248, 90, 90);
+    text-align: center;
+}
+
+select{
+    padding: 0.5rem;
 }
 
 </style>

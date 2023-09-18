@@ -46,9 +46,15 @@ export default {
         <i v-if="showPositive" class="fa-regular fa-face-smile"></i>
         <i v-if="showNeutral" class="fa-regular fa-face-meh"></i>
         <i v-if="showNegative" class="fa-regular fa-face-tired"></i>
-        <p class="activity-date">{{ activity.created_at }}</p>
+        <p class="activity-date"> {{ activity.dayOfWeek }} - {{ activity.lessonDate }}</p>
     </div>
     <div class="activity-content">
+        <p class="activity-student">Profesor:
+            <p>{{ activity.professorName }}</p>
+        </p>
+        <p class="activity-student">Predmet:
+            <p>{{ activity.subjectName }}</p>
+        </p>
         <p class="activity-student">Učenik:
             <a :href="userLink">{{ name }}</a>
         </p>
