@@ -75,23 +75,52 @@ class LessonController extends Controller
         $res = null;
 
         $dates = Lesson::selectRaw('DATE_FORMAT(created_at, "%d.%m.%Y") as formatedDate')
-                    ->whereDate('created_at', $dateQuery)
-                    ->groupBy('formatedDate')
-                    ->get();
+                            ->where('created_at', $dateQuery)
+                            ->groupBy('formatedDate')
+                            ->orderBy('formatedDate', 'DESC')
+                            ->get();
+    
+    $dates->each(function ($item) {
+        $formattedDate = \Carbon\Carbon::createFromFormat('d.m.Y', $item->formatedDate)->format('Y-m-d');
+
+        $dayOfWeek = Carbon::parse($item->formatedDate)->dayOfWeek;
         
-                    $dates->each(function ($item) {
-                        $formattedDate = \Carbon\Carbon::createFromFormat('d.m.Y', $item->formatedDate)->format('Y-m-d');
-                        
-                        $classes = DB::table('school_classes as SC')
-                        ->select('*')
-                        ->join('lessons as L', 'L.class_id', '=', 'SC.id')
-                        ->whereDate('L.created_at', '=', $formattedDate)
-                        ->distinct()
-                        ->get();
-            
-            
-                    $item->classes = $classes;
-                });
+        $classes = DB::table('school_classes as SC')
+        ->select('*')
+        ->join('lessons as L', 'L.class_id', '=', 'SC.id')
+        ->whereDate('L.created_at', '=', $formattedDate)
+        ->distinct()
+        ->get();
+
+        
+        switch($dayOfWeek){
+            case 0:
+                $item->dayOfWeek = "Subota";
+                break;
+            case 1:
+                $item->dayOfWeek = "Ponedeljak";
+                break;
+            case 2:
+                $item->dayOfWeek = "Utorak";
+                break;
+            case 3:
+                $item->dayOfWeek = "Sreda";
+                break;
+            case 4:
+                $item->dayOfWeek = "Četvrtak";
+                break;
+            case 5:
+                $item->dayOfWeek = "Petak";
+                break;
+            case 6:
+                $item->dayOfWeek = "Nedelja";
+                break;
+            default:
+                break;
+        }
+        
+        $item->classes = $classes;
+    });
 
         if(count($dates) > 0){
             $res = $dates[0];
@@ -109,17 +138,45 @@ class LessonController extends Controller
                             ->orderBy('formatedDate', 'DESC')
                             ->get();
     
-        $groupedLessons->each(function ($item) {
-            $formattedDate = \Carbon\Carbon::createFromFormat('d.m.Y', $item->formatedDate)->format('Y-m-d');
-            
-            $classes = DB::table('school_classes as SC')
-            ->select('*')
-            ->join('lessons as L', 'L.class_id', '=', 'SC.id')
-            ->whereDate('L.created_at', '=', $formattedDate)
-            ->distinct()
-            ->get();
+    $groupedLessons->each(function ($item) {
+        $formattedDate = \Carbon\Carbon::createFromFormat('d.m.Y', $item->formatedDate)->format('Y-m-d');
 
+        $dayOfWeek = Carbon::parse($item->formatedDate)->dayOfWeek;
+        
+        $classes = DB::table('school_classes as SC')
+        ->select('*')
+        ->join('lessons as L', 'L.class_id', '=', 'SC.id')
+        ->whereDate('L.created_at', '=', $formattedDate)
+        ->distinct()
+        ->get();
 
+        
+        switch($dayOfWeek){
+            case 0:
+                $item->dayOfWeek = "Subota";
+                break;
+            case 1:
+                $item->dayOfWeek = "Ponedeljak";
+                break;
+            case 2:
+                $item->dayOfWeek = "Utorak";
+                break;
+            case 3:
+                $item->dayOfWeek = "Sreda";
+                break;
+            case 4:
+                $item->dayOfWeek = "Četvrtak";
+                break;
+            case 5:
+                $item->dayOfWeek = "Petak";
+                break;
+            case 6:
+                $item->dayOfWeek = "Nedelja";
+                break;
+            default:
+                break;
+        }
+        
         $item->classes = $classes;
     });
 
