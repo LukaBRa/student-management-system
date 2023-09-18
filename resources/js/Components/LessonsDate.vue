@@ -17,8 +17,7 @@ export default {
     ],
     mounted() {
         if(this.lessonDate.classes){
-            this.tempArr = this.lessonDate.classes;
-            this.uniqueClasses = [...new Set(this.tempArr.map(item => item.class_name))];
+            this.uniqueClasses = this.lessonDate.classes;
         }
     }
 }
@@ -30,7 +29,7 @@ export default {
 <div class="date-lessons-container">
     <h3> {{ lessonDate.dayOfWeek }} - {{ lessonDate.formatedDate }}</h3>
     <div class="date-lessons-container-lessons">
-        <LessonsCard v-for="uniqueClass in uniqueClasses" :key="uniqueClass" :user="user" :uniqueClass="uniqueClass" :lessons="this.tempArr"/>
+        <LessonsCard v-for="uniqueClass in uniqueClasses" :key="uniqueClass" :user="user" :uniqueClass="uniqueClass" :lessons="uniqueClass.classLessons"/>
     </div>
 </div>
 

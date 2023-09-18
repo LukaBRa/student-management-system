@@ -677,13 +677,40 @@ Route::get('/dnevnik', function () {
         $formattedDate = \Carbon\Carbon::createFromFormat('d.m.Y', $item->formatedDate)->format('Y-m-d');
 
         $dayOfWeek = Carbon::parse($item->formatedDate)->dayOfWeek;
-        
-        $classes = DB::table('school_classes as SC')
-        ->select('*')
-        ->join('lessons as L', 'L.class_id', '=', 'SC.id')
-        ->whereDate('L.created_at', '=', $formattedDate)
-        ->distinct()
-        ->get();
+
+        $classes = DB::table('school_classes')
+                ->select('*')
+                ->whereIn('id', function($query) use ($formattedDate){
+                    $query->select('class_id')
+                    ->from('lessons')
+                    ->whereDate('created_at', '=', $formattedDate)
+                    ->get();
+                })
+                ->get();
+
+        $classes->each(function($tempClass) use ($formattedDate){
+
+            $classLessons = Lesson::where('class_id', '=', $tempClass->id)
+                                    ->whereDate('created_at', '=', $formattedDate)
+                                    ->orderBy('lesson_number')
+                                    ->get();
+            
+            $classLessons->each(function ($tmpLesson) {
+                
+                $subject = Subject::where('id', function($query) use ($tmpLesson){
+                    $query->select('subject_id')
+                    ->from('lessons')
+                    ->where('id', $tmpLesson->id)
+                    ->first();
+                })->first();
+
+                $tmpLesson->subject_name = $subject->subject_name;
+
+            });
+
+            $tempClass->classLessons = $classLessons;
+
+        });
 
         
         switch($dayOfWeek){

@@ -15,25 +15,6 @@ export default {
         'user'
     ],
     mounted() {
-        this.tempArr = this.lessons;
-        this.classLessons = this.tempArr.filter(el => el.class_name == this.uniqueClass)
-        this.classLessons.sort((a,b) => a.lesson_number - b.lesson_number);
-        this.classLessons.forEach((item) => {
-            axios.get("http://localhost:8000/api/get-subject-name/" + item.subject_id)
-            .then(response => {
-                item.subject_name = response.data;
-                if(this.user.type_id == 2){
-                    if(item.user_id == this.user.id){
-                        item.canView = true;
-                    }else{
-                        item.canView = false;
-                    }
-                }else{
-                    item.canView = true;
-                }
-            })
-            .catch(error => console.log(error));
-        })
     }
 }
 
@@ -43,17 +24,17 @@ export default {
 
 <div class="lessons-card">
 
-    <h3>{{ uniqueClass }}</h3>
+    <h3>{{ uniqueClass.class_name }}</h3>
 
     <table>
         <tr>
             <th>Čas</th>
             <th>Predmet</th>
         </tr>
-        <tr v-for="tmpLesson in classLessons">
+        <tr v-for="tmpLesson in lessons">
             <td>{{ tmpLesson.lesson_number }}</td>
             <td>{{ tmpLesson.subject_name }}</td>
-            <td><a v-if="tmpLesson.canView" class="lessons-link" :href="'/cas/' + tmpLesson.id">Detaljnije</a></td>
+            <td><a v-if="tmpLesson.user_id == user.id" class="lessons-link" :href="'/cas/' + tmpLesson.id">Detaljnije</a></td>
         </tr>
     </table>
 
