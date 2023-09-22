@@ -5,14 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class StudentSubject extends Model
+class Concultation extends Model
 {
-    
     use HasFactory;
 
     protected $fillable = [
-        'final_mark',
-        'explanation'
+        'professor_id',
+        'consultation_appointment',
+        'room_name'
     ];
-
 }

@@ -34,7 +34,10 @@ export default {
         <tr v-for="tmpLesson in lessons">
             <td>{{ tmpLesson.lesson_number }}</td>
             <td>{{ tmpLesson.subject_name }}</td>
-            <td><a v-if="tmpLesson.user_id == user.id" class="lessons-link" :href="'/cas/' + tmpLesson.id">Detaljnije</a></td>
+            <td>
+                <a v-if="tmpLesson.user_id == user.id" class="lessons-link" :href="'/cas/' + tmpLesson.id">Detaljnije</a>
+                <a v-if="user.type_id == 1" class="lessons-link" :href="'/cas/' + tmpLesson.id">Detaljnije</a>
+            </td>
         </tr>
     </table>
 

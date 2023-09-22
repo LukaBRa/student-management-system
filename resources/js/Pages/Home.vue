@@ -38,7 +38,8 @@ export default {
         'parents',
         'finalMarks',
         'professorsSubjects',
-        'finalScore'
+        'finalScore',
+        'professors'
     ],
     methods:{
         toggleMarksTab() {
@@ -115,6 +116,9 @@ export default {
         professorsRule() {
             return this.user.type_id == 2;
         },
+        isParent() {
+            return this.user.type_id == 3;
+        }
     },
     mounted() {
         this.studActivities = this.activities;
@@ -144,34 +148,6 @@ export default {
                 <p class="student-name">{{ student.name }}</p>
                 <div class="student-data">
                     <div class="data-box">
-                        <p class="data-box-accent">Ime majke:</p>
-                        <p>{{ parents[0].name }}</p>
-                    </div>
-                    <div class="data-box">
-                        <p class="data-box-accent">Ime oca:</p>
-                        <p>{{ parents[1].name }}</p>
-                    </div>
-                    <div class="data-box">
-                        <p class="data-box-accent">Adresa:</p>
-                        <p>{{ student.adress }}</p>
-                    </div>
-                    <div class="data-box">
-                        <p class="data-box-accent">Broj telefona:</p>
-                        <p>{{ student.phone_number }}</p>
-                    </div>
-                    <div class="data-box">
-                        <p class="data-box-accent">Broj telefona majke:</p>
-                        <p>{{ parents[0].phone_number }}</p>
-                    </div>
-                    <div class="data-box">
-                        <p class="data-box-accent">Broj telefona oca:</p>
-                        <p>{{ parents[1].phone_number }}</p>
-                    </div>
-                    <div class="data-box">
-                        <p class="data-box-accent">Email adresa roditelja:</p>
-                        <p>{{ parents[0].email }}</p>
-                    </div>
-                    <div class="data-box">
                         <p class="data-box-accent">Odeljenje:</p>
                         <p>{{ studentClass.class_name }}</p>
                     </div>
@@ -179,10 +155,34 @@ export default {
                         <p class="data-box-accent">Broj izostanaka:</p>
                         <p>{{ numberOfAbsences }}</p>
                     </div>
-                    <h3 class="average-mark">Prosek: {{ finalScore }}</h3>
-                    <div class="student-btn-group">
-                        <button v-if="professorsRule" @click="toggleAddMarkForm">Upiši ocenu</button>
-                        <button v-if="professorsRule" @click="toggleAddActivitiesForm">Upiši aktivnost</button>
+                    <div class="data-box">
+                        <p class="data-box-accent">Prosek: :</p>
+                        <p>{{ finalScore }}</p>
+                    </div>
+                    <div class="appointments">
+                        <h3>Konsultacije</h3>
+                        <div class="consultations">
+                            <table>
+                                <tr>
+                                    <th>Profesor</th>
+                                    <th>Predmeti</th>
+                                    <th>Termini</th>
+                                    <th>Kabineti</th>
+                                </tr>
+                                <tr v-for="p in professors">
+                                    <td>{{ p.name }}</td>
+                                    <td>
+                                        <tr v-for="subj in p.subjects"><td>{{ subj.subject_name }}</td></tr>
+                                    </td>
+                                    <td>
+                                        <tr class="small-text" v-for="con in p.consultations"><td>{{ con.consultation_appointment }}</td></tr>
+                                    </td>
+                                    <td>
+                                        <tr v-for="con in p.consultations"><td>{{ con.room_name }}</td></tr>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -212,7 +212,7 @@ export default {
 
 </template>
 
-<style>
+<style scoped>
 
 .student-container{
     width: 100%;
@@ -223,8 +223,12 @@ export default {
     display: flex;
 }
 
+.appointments{
+    height: 20rem;
+    overflow: auto;
+}
 .student-personal-info{
-    width: 40%;
+    width: 60%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -243,7 +247,7 @@ export default {
 .student-data{
     margin-top: 2rem;
     width: 90%;
-    padding: 2rem;
+    padding: 0rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -261,7 +265,7 @@ export default {
 
 .student-statistics{
     padding: 1rem;
-    width: 60%;
+    width: 50%;
 }
 
 .student-tabs{
@@ -279,6 +283,9 @@ export default {
     cursor: pointer;
 }
 
+.small-text{
+    font-size: 0.9rem;
+}
 .student-tabs button.active-btn{
     border-bottom: 2px solid var(--brown);
     color: var(--brown);
@@ -318,6 +325,22 @@ export default {
 .student-btn-group button:hover{
     background-color: #966560;
     border: 1px solid #966560;
+}
+
+table{
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+td, th{
+    border: 1px solid lightgray;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: rgb(245, 245, 245);
 }
 
 </style>

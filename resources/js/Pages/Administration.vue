@@ -5,19 +5,53 @@ import Welcome from '../Components/Welcome.vue';
 import TotalCard from '../Components/TotalCard.vue';
 import Activity from '../Components/Activity.vue';
 import GoogleChart from '../Components/GoogleChart.vue';
+import Appointments from '../Components/Appointments.vue';
+import Message from '../Components/Message.vue';
 
 export default{
-    components: {
-        Sidebar, Welcome, TotalCard, Activity, GoogleChart
+    data(){
+        return {
+            message: '',
+            showMessage: false,
+        }
     },
+    components: {
+    Sidebar, Welcome, TotalCard, Activity, GoogleChart, Appointments,
+    Appointments, Message
+},
     props: [
         'user',
         'numberOfStudents',
         'numberOfProfessors',
         'lessons',
         'activities',
-        'lessonGroups'
+        'lessonGroups',
+        'appointments'
     ],
+    computed: {
+        isProfessor(){
+            return this.user.type_id == 2;
+        }
+    },
+    methods: {
+        deleteAppointment(id){ 
+            axios.post("http://localhost:8000/api/delete-appointment", {
+                appId: id
+            })
+            .then(response => {
+                if(response.data == "success"){
+                    this.message = "Uspešno ste uklonili termin konsultacija."
+                    this.showMessage = true;
+                    setTimeout(() => {
+                        this.showMessage = false;
+                        this.message = "";
+                        window.location.href = "http://localhost:8000/administracija";
+                    }, 1000);
+                }
+            })
+            .catch(error => console.log(error));
+        }
+    }
 }
 
 </script>
@@ -27,6 +61,8 @@ export default{
 <div class="container">
     
     <Sidebar :user="user" active="Početna"/>
+
+    <Message v-if="showMessage" :message="message"/>
 
     <div class="dashboard bg-light">
 
@@ -46,13 +82,20 @@ export default{
                 <h2>Aktivnosti</h2>
 
                 <div class="activities">
-                    <Activity v-for="activity in activities" :key="activity.id" :activity="activity" studentName="none"/>
+                    <Activity v-for="activity in activities" :key="activity.id" :activity="activity" :studentName="activity.student.name"/>
                 </div>
 
             </div>
 
             <div class="lesson-statistics">
-                <GoogleChart :lessonGroups="lessonGroups"/>
+                <GoogleChart v-if="!isProfessor" :lessonGroups="lessonGroups"/>
+            </div>
+
+            <div v-if="isProfessor" class="recent-activities">
+                <h2>Vaše konsultacije</h2>
+
+                <Appointments @deleteAppointment="deleteAppointment"  :appointments="appointments"/>
+
             </div>
 
         </div>

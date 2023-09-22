@@ -23,6 +23,7 @@ export default {
             formSubjId: '',
             formAverageScore: null,
             formStudentId: null,
+            formMarks: [],
         }
     },
     components: {
@@ -57,12 +58,13 @@ export default {
         toggleConfirmMark() {
             this.showConfirmMark = !this.showConfirmMark;
         },
-        toggleConfirmMarkData(subjectName, subjectId, averageScore, studentId) {
+        toggleConfirmMarkData(subjectName, subjectId, averageScore, studentId, marks) {
             this.formSubjName = subjectName;
             this.formSubjId = subjectId;
             this.formAverageScore = averageScore;
             this.formStudentId = studentId
             this.showConfirmMark = !this.showConfirmMark;
+            this.formMarks = marks;
         },
         markAddedHandle() {
             this.message = "Uspešno je dodata ocena."
@@ -116,6 +118,9 @@ export default {
         professorsRule() {
             return this.user.type_id == 2;
         },
+        isParent() {
+            return this.user.type_id == 3;
+        }
     },
     mounted() {
         this.studActivities = this.activities;
@@ -134,7 +139,7 @@ export default {
 
     <AddMarkForm v-if="showAddMarkForm" @success="markAddedHandle" @toggleAddMarkForm="toggleAddMarkForm" :canAddMarkSubjects="subjects" :professorId="user.id" :studentId="student.id"/>
     <AddActivity v-if="showAddActivityForm" @toggleAddActivitiesForm="toggleAddActivitiesForm" :professorLessons="professorLessons" :studentId="student.id" @success="activityAddedHandle"/>
-    <ConfirmMark v-if="showConfirmMark" @success="handleSuccessfullConfirmation" @toggleConfirmMark="toggleConfirmMark" :formStudentId="formStudentId" :user="user"  :formSubjName="formSubjName" :formSubjId="formSubjId" :formAverageScore="formAverageScore" />
+    <ConfirmMark v-if="showConfirmMark" @success="handleSuccessfullConfirmation" @toggleConfirmMark="toggleConfirmMark" :formStudentId="formStudentId" :user="user"  :formSubjName="formSubjName" :formSubjId="formSubjId" :formAverageScore="formAverageScore" :formMarks="formMarks"/>
 
     <div class="dashboard bg-light">
 
@@ -143,7 +148,7 @@ export default {
             <div class="student-personal-info">
                 <i class="fa-solid fa-user-graduate"></i>
                 <p class="student-name">{{ student.name }}</p>
-                <div class="student-data">
+                <div v-if="!isParent" class="student-data">
                     <div class="data-box">
                         <p class="data-box-accent">Ime majke:</p>
                         <p>{{ parents[0].name }}</p>

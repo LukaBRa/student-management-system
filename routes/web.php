@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConcultationController;
 use App\Models\User;
 use Illuminate\Support\Facades\Date;
 use Inertia\Inertia;
@@ -19,6 +20,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Concultation;
 use App\Models\Mark;
 
 /*
@@ -352,8 +354,9 @@ Route::get("/administracija", function () {
     $numberOfStudents = User::where('type_id', 4)->count();
     $numberOfProfessors = User::where('type_id', 2)->count();
     $lessons = Lesson::all();
+    $appointments = Concultation::where('professor_id', '=', Auth::user()->id)->get();
     $activities = $activities = DB::table('activities as A')
-    ->select('*')
+    ->select('A.*')
     ->join('lessons as L', 'L.id', '=', 'A.lesson_id')
     ->orderBy('L.created_at', 'desc')
     ->get();
@@ -388,6 +391,8 @@ Route::get("/administracija", function () {
                                             })
                                             ->first();
                         
+                                $student = User::firstWhere('id', $item->user_id);
+                        
                                 $lesson = Lesson::selectRaw('DATE_FORMAT(created_at, "%d.%m.%Y") as formatedDate')
                                                     ->where('id', '=', $item->lesson_id)->first();
                                 $lessonDate = $lesson->formatedDate;
@@ -418,13 +423,12 @@ Route::get("/administracija", function () {
                                     default:
                                         break;
                                 }
+                                $item->student = $student;
                                 $item->lessonDate = $lessonDate;
                                 $item->professorName = $professor->name;
                                 $item->subjectName = $subject->subject_name;
                         
                             });
-
-    $activities->sortByDesc('lessonDate');
 
     if(Auth::user()->type_id == 3){
         return redirect("/pocetna");
@@ -436,7 +440,8 @@ Route::get("/administracija", function () {
         'numberOfProfessors' => $numberOfProfessors,
         'lessons' => $lessons,
         'activities' => $activities,
-        'lessonGroups' => $result
+        'lessonGroups' => $result,
+        'appointments' => $appointments,
     ]);
 })->name('dashboard')->middleware('auth');
 
@@ -446,6 +451,30 @@ Route::get("/pocetna", function() {
     $studentID = StudentParent::firstWhere('parent_id', $user->id);
     $student = User::firstWhere('id', $studentID->student_id);
     $studentsSubjects = $student->studentsSubjects()->get();
+    $professors = DB::table('users')
+                ->whereIn('id', function($query) use($student){
+                    $query->select('professor_id')
+                    ->from('professor_classes')
+                    ->where('class_id', '=', $student->class_id)
+                    ->get();
+                })
+                ->get();
+    $professors->each(function($p) use($student) {
+
+        $consultations = Concultation::where('professor_id', '=', $p->id)->get();
+
+        $subjects = Subject::whereIn('id', function($query) use ($p, $student){
+            $query->select('subject_id')
+            ->from('professor_classes')
+            ->where('professor_id', '=', $p->id)
+            ->where('class_id', '=', $student->class_id)
+            ->get();
+        })->get();
+
+        $p->subjects = $subjects;
+        $p->consultations = $consultations;
+
+    });
     $studentClass = SchoolClass::firstWhere('id', $student->class_id);
     $numberOfAbsences = Absence::where('user_id', $student->id)->count();
     $activities = $activities = DB::table('activities as A')
@@ -555,6 +584,7 @@ Route::get("/pocetna", function() {
         'finalMarks' => $finalMarks,
         'professorsSubjects' => $professorsSubjects,
         'finalScore' => $finalScore,
+        'professors' => $professors,
     ]);
 
 })->middleware('auth');
@@ -1083,3 +1113,6 @@ Route::get("/nalog", function() {
 })->middleware('auth');
 
 Route::post("/izmeni-lozinku", [UserController::class, 'changePassword']);
+Route::post("/change-password", [UserController::class, 'changePassword']);
+
+Route::post("/add-consultation-appointment", [ConcultationController::class, 'addAppointment']);

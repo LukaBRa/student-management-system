@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\ConcultationController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\MarkController;
 use App\Http\Controllers\ProfessorSubjectController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\StudentSubjectController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
+use App\Models\Concultation;
 use App\Models\StudentSubject;
 use App\Models\Subject;
 use Illuminate\Http\Request;
@@ -59,3 +61,5 @@ Route::post("/confirm-mark", [StudentSubjectController::class, 'confirmMark']);
 Route::post("/delete-mark", [MarkController::class, 'deleteMark']);
 
 Route::post("/add-subject", [ProfessorSubjectController::class, 'addSubject']);
+
+Route::post("delete-appointment", [ConcultationController::class, "deleteAppointment"]);

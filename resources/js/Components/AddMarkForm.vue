@@ -54,12 +54,14 @@ export default{
             <div class="form-input">
                 <label>Izaberi predmet:</label>
                 <select v-model="subjectId">
+                    <option value="0" default>Predmet...</option>
                     <option v-for="subject in canAddMarkSubjects" :key="subject.id" :value="subject.id">{{ subject.subject_name }}</option>
                 </select>
             </div>
             <div class="form-input">
                 <label>Izaberi ocenu:</label>
                 <select v-model="mark">
+                    <option value="0" default>Ocena...</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>

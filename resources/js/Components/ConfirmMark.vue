@@ -8,6 +8,7 @@ export default {
             marks: [],
             finalMark: 0,
             errorMsg: '',
+            description: '',
         }
     },
     props: [
@@ -15,7 +16,8 @@ export default {
         'formStudentId',
         'formSubjName',
         'formSubjId',
-        'formAverageScore'
+        'formAverageScore',
+        'formMarks'
     ],
     methods: {
         submitForm() {
@@ -28,7 +30,8 @@ export default {
                     axios.post("http://localhost:8000/api/confirm-mark", {
                         studentId: this.formStudentId,
                         subjectId: this.formSubjId,
-                        finalMark: this.finalMark
+                        finalMark: this.finalMark,
+                        description: this.description,
                         })
                         .then(response => {
                             if(response.data == "success"){
@@ -41,14 +44,28 @@ export default {
         }
     },
     mounted() {
-        let avgMark = Math.round(this.formAverageScore);
-        for(let i = avgMark; i<=5; i++){
-            this.marks.push(i);
+        let temp = this.formMarks;
+        for(let i=0; i < temp.length; i++){
+            this.marks.push(temp[i].mark);
         }
+        this.marks = [...new Set(this.marks)].sort();
     },
     computed: {
         averageScore() {
             return Math.round(this.formAverageScore * 100) / 100;
+        },
+        recommended(){ 
+            if(this.formAverageScore < 1.50){
+                return 1;
+            }else if(this.formAverageScore >= 1.50 && this.formAverageScore < 2.50){
+                return 2;
+            }else if(this.formAverageScore >= 2.50 && this.formAverageScore < 3.50){
+                return 3;
+            }else if(this.formAverageScore >= 3.50 && this.formAverageScore < 4.50){
+                return 4;
+            }else if(this.formAverageScore >= 4.50){
+                return 5;
+            }
         }
     }
 }
@@ -67,13 +84,18 @@ export default {
             <h2>Zaključivanje ocene</h2>
             <p><span class="bold-accent">Predmet:</span> {{ formSubjName }}</p>
             <p><span class="bold-accent">Prosečna ocena:</span> {{ averageScore }}</p>
-            <p class="light-accent">(Možete zaključiti samo ocenu odredjenu prosekom ili veću)</p>
+            <p><span class="bold-accent">Preporučena ocena:</span> {{ recommended }}</p>
+            <p class="light-accent">(Nije moguće zaključiti ocenu manju od najmanje upisane)</p>
             <div class="input-box">
                 <label>Izaberite zaključnu ocenu:</label>
                 <select v-model="finalMark">
                     <option value="0" default>Izaberite ocenu</option>
                     <option v-for="mark in marks" :value="mark">{{ mark }}</option>
                 </select>
+            </div>
+            <div class="input-box">
+                <label for="desc">Obrazloženje</label>
+                <input v-model="description" type="text" id="desc" placeholder="Obrazloženje...">
             </div>
             <p class="error-msg">{{ errorMsg }}</p>
             <input type="submit" value="Zaključi ocenu">
@@ -89,6 +111,10 @@ export default {
 
 .bold-accent{
     font-weight: bold;
+}
+
+#desc{
+    padding: 0.5rem;
 }
 
 h2{

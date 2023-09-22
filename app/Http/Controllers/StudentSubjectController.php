@@ -29,6 +29,7 @@ class StudentSubjectController extends Controller
                                 ->firstOrFail();
 
         $record->final_mark = $request->finalMark;
+        $record->explanation = $request->description;
         $record->save();
 
         return response()->json("success");

@@ -8,6 +8,7 @@ export default{
             canConfirmMark: false,
             tempSubjects: [],
             tempSubj: null,
+            explanation: '',
         }
     },
     props: [
@@ -32,29 +33,11 @@ export default{
         }
     },
     mounted() {
-        /* this.finalMarks.forEach(mark => {
-            if(mark.subject_id == this.subject.id){
-                this.finalMark = mark.final_mark;
+        for(let i=0; i < this.finalMarks.length; i++){
+            if(this.finalMarks[i].subject_id == this.subject.id && this.finalMarks[i].user_id == this.student.id){
+                this.explanation = this.finalMarks[i].explanation;
             }
-        });
-
-        axios.get(`http://localhost:8000/api/get-marks/${this.subject.id}/student/${this.student.id}`)
-        .then(response => {
-            this.marks = response.data.marks;
-            
-            if(this.marks.length > 0) {
-                let sum = 0;
-
-                this.marks.forEach(mark => {
-                    sum += mark;
-                });
-
-                this.averageMark = sum/this.marks.length;
-            }
-
-        })
-        .catch(error => console.log(error)); */
-
+        }
         this.tempSubjects = this.professorsSubjects;
         this.tempSubj = this.subject;
 
@@ -88,9 +71,12 @@ export default{
         <p class="avg-mark">Prosečna ocena: {{ subject.avgMark }}</p>
     </div>
     <div class="final-mark-container">
-        <p v-if="showFinalMark" class="final-mark">Zaključna ocena: <span class="final-mark-accent">{{ subject.finalMark }}</span></p>
+        <p v-if="showFinalMark" class="final-mark">
+            Zaključna ocena: <span class="final-mark-accent">{{ subject.finalMark }}</span><br>
+            Obrazloženje: {{ explanation }}
+        </p>
         <span v-else class="light-accent">
-            <button v-if="canConfirmMark" @click="$emit('toggleConfirmMark', subject.subject_name, subject.id, subject.avgMark, student.id)" class="confirm-mark-btn">Zaključi ocenu</button>
+            <button v-if="canConfirmMark" @click="$emit('toggleConfirmMark', subject.subject_name, subject.id, subject.avgMark, student.id, subject.marks)" class="confirm-mark-btn">Zaključi ocenu</button>
             Nije zaključena ocena
         </span>
         <button @click="deleteMark" v-if="canDeleteFinalMark && showFinalMark" class="confirm-mark-btn">Poništi ocenu</button>

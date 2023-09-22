@@ -14,18 +14,22 @@ class SchoolClass extends Seeder
     public function run(): void
     {
         $data = [
-            ['class_name' => 'V-1'],
-            ['class_name' => 'V-2'],
-            ['class_name' => 'V-3'],
-            ['class_name' => 'VI-1'],
-            ['class_name' => 'VI-2'],
-            ['class_name' => 'VI-3'],
-            ['class_name' => 'VII-1'],
-            ['class_name' => 'VII-2'],
-            ['class_name' => 'VII-3'],
-            ['class_name' => 'VIII-1'],
-            ['class_name' => 'VIII-2'],
-            ['class_name' => 'VIII-3'],
+            ['class_name' => 'I-a'],
+            ['class_name' => 'I-b'],
+            ['class_name' => 'I-v'],
+            ['class_name' => 'I-g'],
+            ['class_name' => 'II-a'],
+            ['class_name' => 'II-b'],
+            ['class_name' => 'II-v'],
+            ['class_name' => 'II-g'],
+            ['class_name' => 'III-a'],
+            ['class_name' => 'III-b'],
+            ['class_name' => 'III-v'],
+            ['class_name' => 'III-g'],
+            ['class_name' => 'IV-a'],
+            ['class_name' => 'IV-b'],
+            ['class_name' => 'IV-v'],
+            ['class_name' => 'IV-g'],
         ];
 
         DB::table('school_classes')->insert($data);
