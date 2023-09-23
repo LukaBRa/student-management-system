@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
             [
                 'type_id' => '1',
                 'class_id' => null,
-                'name' => "Petar Petrovic",
+                'name' => "Petar Petrović",
                 'email' => 'pera@gmail.com',
                 'password' => Hash::make("pera2000"),
                 'adress' => "Beograd 11",

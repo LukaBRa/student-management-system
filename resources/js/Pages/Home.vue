@@ -166,8 +166,8 @@ export default {
                                 <tr>
                                     <th>Profesor</th>
                                     <th>Predmeti</th>
-                                    <th>Termini</th>
-                                    <th>Kabineti</th>
+                                    <th>Termini</th><!-- 
+                                    <th>Kabineti</th> -->
                                 </tr>
                                 <tr v-for="p in professors">
                                     <td>{{ p.name }}</td>
@@ -177,9 +177,9 @@ export default {
                                     <td>
                                         <tr class="small-text" v-for="con in p.consultations"><td>{{ con.consultation_appointment }}</td></tr>
                                     </td>
-                                    <td>
+                                    <!-- <td>
                                         <tr v-for="con in p.consultations"><td>{{ con.room_name }}</td></tr>
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </table>
                         </div>
@@ -223,7 +223,7 @@ export default {
     display: flex;
 }
 
-.appointments{
+.consultations{
     height: 20rem;
     overflow: auto;
 }

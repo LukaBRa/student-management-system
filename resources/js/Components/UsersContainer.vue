@@ -120,6 +120,11 @@ export default {
             }
             this.isProfessor = this.currentUser.type_id == 2;
     },
+    computed: {
+        showStudents() {
+            return this.profClasses.length > 0;
+        }
+    }
 }
 
 </script>
@@ -133,7 +138,7 @@ export default {
         <UserCard  v-for="user in users" :key="user.id" :userId="user.id" :userName="user.name" :type="userType"/>
     </div>
 
-    <div class="professors-students">
+    <div v-if="showStudents" class="professors-students">
         <ClassCard v-for="pClass in profClasses" :key="pClass.id" :pClass="pClass" :currentUser="currentUser"/>
     </div>
 
@@ -148,6 +153,7 @@ export default {
     margin-top: 1rem;
     padding: 1rem;
     height: 85vh;
+    overflow: auto;
 }
 
 .users-container h2{

@@ -71,7 +71,9 @@ export default{
             </select>
         </div>
 
-        <UsersContainer :users="pageUsers" userType="professors" :currentUser="user" :profClasses="[]" :category="professorFilter"/>
+        <div class="prof-div">
+            <UsersContainer :users="pageUsers" userType="professors" :currentUser="user" :profClasses="[]" :category="professorFilter"/>
+        </div>
 
     </div>
 
@@ -87,6 +89,10 @@ export default{
     align-items: center;
     justify-content: space-between;
     padding: 1rem;
+}
+
+.prof-div{
+    background-color: red;
 }
 
 .add-professor-link{

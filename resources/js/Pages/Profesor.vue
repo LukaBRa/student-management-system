@@ -3,6 +3,7 @@
 import Sidebar from '../Components/Sidebar.vue';
 import Message from '../Components/Message.vue';
 import AddSubjectProfessor from '../Components/AddSubjectProfessor.vue';
+import Appointments from '../Components/Appointments.vue';
 
 export default{
     data() {
@@ -13,7 +14,7 @@ export default{
         }
     },
     components: {
-        Sidebar, Message, AddSubjectProfessor
+        Sidebar, Message, AddSubjectProfessor, Appointments
     },
     props: [
         'professor',
@@ -21,7 +22,8 @@ export default{
         'allSubjects',
         'user',
         'prClassesSubjects',
-        'allClasses'
+        'allClasses',
+        'appointments'
     ],
     methods: {
         toggleForm(){
@@ -71,6 +73,10 @@ export default{
                 <p class="student-name">{{ professor.name }}</p>
                 <div class="user-btn-group">
                     <button v-if="adminRule" @click="toggleForm">Dodaj predmet</button>
+                </div>
+                <div class="app-section">
+                    <h3>Konsultacije</h3>
+                    <Appointments @deleteAppointment=""  :appointments="appointments"/>
                 </div>
             </div>
 
@@ -149,11 +155,14 @@ export default{
 .student-data{
     margin-top: 2rem;
     width: 90%;
+    height: 94%;
+    overflow: auto;
     padding: 2rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
 }
+
 
 .data-box{
     display: flex;
@@ -174,7 +183,7 @@ export default{
 }
 
 .table-container{
-    height: 80vh;
+    height: max-content;
     overflow: auto;
 }
 
@@ -216,6 +225,21 @@ td, th{
 .user-btn-group button:hover{
     background-color: #966560;
     border: 1px solid #966560;
+}
+
+.app-section{
+    margin-top: 1rem;
+    height: 24rem;
+    width: 80%;
+    overflow: auto;
+}
+
+.app-section h3{
+    margin-bottom: 0.5rem;
+}
+
+.app-section table{
+    width: 100%;
 }
 
 </style>

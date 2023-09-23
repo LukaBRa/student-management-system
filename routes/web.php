@@ -963,6 +963,7 @@ Route::get('/profesor/{id}', function ($id) {
 
     $professor = User::firstWhere('id', $id);
     $professorSubjects = $professor->professorsSubjects()->get();
+    $appointments = Concultation::where('professor_id', '=', $professor->id)->get();
     $user = Auth::user();
     $subjects = Subject::all();
     $prClassesSubjects = DB::table('professor_classes as PC')
@@ -985,6 +986,7 @@ Route::get('/profesor/{id}', function ($id) {
         'user' => $user,
         'prClassesSubjects' => $prClassesSubjects,
         'allClasses' => $allClasses,
+        'appointments' => $appointments
     ]);
 })->middleware('auth');
 

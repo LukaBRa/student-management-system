@@ -27,12 +27,16 @@ export default{
 
 <a v-if="showStudentIcon" :href="'/ucenik/' + userId" class="user-card">
     <i class="fa-solid fa-user-graduate"></i>
-    <p>{{ userName }}</p>
+    <p class="u-name">{{ userName }}</p>
 </a>
 
 </template>
 
 <style>
+
+.u-name{
+    text-align: center;
+}
 
 .user-card{
     width: 15%;

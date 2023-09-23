@@ -16,12 +16,12 @@ export default{
 <div class="appointments">
     <table>
         <tr>
-            <th>Termin</th>
-            <th>Kabinet</th>
+            <th>Termin</th><!-- 
+            <th>Kabinet</th> -->
         </tr>
         <tr v-for="appointment in appointments">
             <td>{{ appointment.consultation_appointment }}</td>
-            <td>{{ appointment.room_name }}</td>
+            <!-- <td>{{ appointment.room_name }}</td> -->
             <td><button class="delete-appointment" @click="$emit('deleteAppointment', appointment.id)">Ukloni termin</button></td>
         </tr>
     </table>

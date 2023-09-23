@@ -72,8 +72,8 @@ export default {
             </select>
             <h2 v-if="!adminRule" >Učenici</h2>
         </div>
-
-        <UsersContainer :users="pageUsers" userType="students" :category="studentFilter" :currentUser="user" :profClasses="profClasses"/>
+        
+            <UsersContainer :users="pageUsers" userType="students" :category="studentFilter" :currentUser="user" :profClasses="profClasses"/>
 
     </div>
 
